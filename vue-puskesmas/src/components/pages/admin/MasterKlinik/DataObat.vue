@@ -1,0 +1,1 @@
+<template>data obat</template>
