@@ -275,6 +275,7 @@ exports.getAntrianByPasien = (req, res) => {
     FROM antrian a
     JOIN poli p ON a.poli_id = p.id
     WHERE a.pasien_id = ? AND a.status = 'menunggu'
+    AND DATE(a.tanggal) = CURDATE()
     ORDER BY a.id DESC
   `;
 

@@ -85,9 +85,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, onUnmounted } from "vue";
 import axios from "axios";
 import Swal from "sweetalert2";
+import io from "socket.io-client"
 import {
   HeartIcon,
   ClipboardDocumentCheckIcon,
@@ -99,6 +100,7 @@ import { UserIcon } from "lucide-vue-next";
 const api = axios.create({ baseURL: "http://localhost:3003/api" });
 const token = localStorage.getItem("token");
 const config = { headers: { Authorization: `Bearer ${token}` } };
+const socket = io("http://localhost:3003")
 
 const poliList = ref([]);
 const antrianList = ref([]);
@@ -195,6 +197,12 @@ const hexToRgba = (hex, alpha = 0.2) => {
 onMounted(() => {
   getPoli();
   getAntrianSaya();
+  socket.on("antrian:baru", () => {
+    getAntrianSaya()
+  })
   // setInterval(getAntrianSaya, 1000);
 });
+onUnmounted(() => {
+  socket.off("antrian:baru")
+})
 </script>

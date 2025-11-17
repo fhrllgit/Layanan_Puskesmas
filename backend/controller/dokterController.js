@@ -194,9 +194,44 @@ exports.getJadwal = (req, res) => {
   });
 };
 
+// untuk account dokterrrr
+exports.getJadwalSaya = (req, res) => {
+  const dokterId = req.user.id; 
+
+  const sql = `
+    SELECT 
+      jd.id,
+      jd.dokter_id,
+      jd.poli_id,
+      p.nama_poli,
+      jd.hari,
+      jd.hari_num,
+      jd.jam_mulai,
+      jd.jam_selesai
+    FROM jadwal_dokter jd
+    JOIN poli p ON jd.poli_id = p.id
+    WHERE jd.dokter_id = ?
+    ORDER BY jd.hari_num ASC, jd.jam_mulai ASC
+  `;
+
+  db.query(sql, [dokterId], (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ message: "Gagal mengambil jadwal dokter" });
+    }
+
+    res.json({
+      dokter_id: dokterId,
+      jadwal: result
+    });
+  });
+};
+
+
 // sistem pasien
 exports.getAntrianDokter = (req, res) => {
   const poliId = req.user.poli_id;
+  const dokterId = req.user.id
   // const today = new Date().toISOString().split("T")[0];
   const now = new Date();
   const today = `${now.getFullYear()}-${(now.getMonth() + 1)
@@ -206,7 +241,10 @@ exports.getAntrianDokter = (req, res) => {
     SELECT a.*, u.nama AS pasien_nama
     FROM antrian a
     JOIN users u ON a.pasien_id = u.id
-    WHERE a.tanggal = ? AND a.poli_id = ? AND a.status IN ('menunggu','dipanggil')
+    WHERE a.tanggal = ?
+     AND a.poli_id = ?
+     AND a.dokter_id = ? 
+     AND a.status IN ('menunggu','dipanggil')
     ORDER BY a.nomor_antrian ASC
   `;
   const sqlPoli = `
@@ -215,7 +253,7 @@ exports.getAntrianDokter = (req, res) => {
     WHERE id = ?
   `;
 
-  db.query(sql, [today, poliId], (err, result) => {
+  db.query(sql, [today, poliId, dokterId], (err, result) => {
     if (err) return res.status(500).json({ message: "Database error" });
     db.query(sqlPoli, [poliId], (err2, poliResult) => {
       if (err) return res.status(500).json({ message: "Database error"})
@@ -343,13 +381,26 @@ exports.selesaiPasien = (req, res) => {
 
 exports.hapusAntrian = (req, res) => {
   const antrianId = req.params.id;
+  const { keterangan } = req.body;
   const io = req.io;
 
-  const sql = `DELETE FROM antrian WHERE id = ?`;
-  db.query(sql, [antrianId], (err, result) => {
-    if (err) return res.status(500).json({ message: "Gagal hapus antrian" });
+  if (!keterangan || keterangan.trim() === "") {
+    return res.status(400).json({ message: "Keterangan wajib diisi" });
+  }
+  const sql = `
+    UPDATE antrian
+    SET status = 'batal', keterangan = ?
+    WHERE id = ?
+  `;
+
+  db.query(sql, [keterangan, antrianId], (err, result) => {
+    if (err) return res.status(500).json({ message: "Gagal mengubah status antrian" });
 
     io.emit("antrian:update");
-    res.json({ message: "Antrian berhasil dihapus" });
+
+    res.json({
+      message: "Antrian berhasil dibatalkan",
+      alasan: keterangan
+    });
   });
 };

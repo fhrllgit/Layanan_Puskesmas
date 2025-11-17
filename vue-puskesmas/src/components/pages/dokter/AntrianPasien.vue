@@ -126,6 +126,24 @@ const fetchAntrian = async () => {
   }
 };
 
+// const fetchAntrian = async () => {
+//   try {
+//     const user = JSON.parse(localStorage.getItem("user"));
+//     const dokter_id = user.id; 
+
+//     const res = await api.get(`/antrian/${dokter_id}`, {
+//       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+//     });
+
+//     antrian.value = res.data.data;
+//     namaPoli.value = res.data.nama_poli;
+//     pasienDipanggil.value = antrian.value.find(a => a.status === "dipanggil");
+//   } catch (err) {
+//     console.error("Gagal ambil antrian:", err);
+//   }
+// };
+
+
 socket.on("antrian:update", () => fetchAntrian());
 onMounted(() => fetchAntrian());
 
@@ -173,9 +191,15 @@ const submitForm = async () => {
   }
 
   try {
-    await api.post(`/antrian/selesai/${selectedPasien.value.id}`, form, {
+    await api.post(`/antrian/selesai/${selectedPasien.value.id}`, {
+      keluhan: form.keluhan,
+      diagnosis: form.diagnosis,
+      tindakan: form.tindakan,
+      items: form.obatList,
+    }, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
     });
+
     Swal.fire("Selesai!", `Pasien ${selectedPasien.value.nomor_antrian} selesai diperiksa`, "success");
     showModal.value = false;
   } catch (err) {
@@ -251,26 +275,39 @@ const submitForm = async () => {
 
 const hapusAntrian = async (a) => {
   const konfirmasi = await Swal.fire({
-    title: "Hapus Antrian?",
-    text: `Yakin ingin menghapus antrian ${a.nomor_antrian}?`,
+    title: "Batalkan Antrian?",
+    text: `Yakin ingin membatalkan antrian ${a.nomor_antrian}?`,
     icon: "warning",
     showCancelButton: true,
     confirmButtonColor: "#d33",
     cancelButtonColor: "#3085d6",
     confirmButtonText: "Ya",
   });
-
   if (!konfirmasi.isConfirmed) return;
+  const { value: keterangan } = await Swal.fire({
+    title: "Alasan Pembatalan",
+    input: "textarea",
+    inputPlaceholder: "Masukkan alasan pembatalan...",
+    inputLabel: "Keterangan",
+    showCancelButton: true,
+    confirmButtonText: "Simpan",
+  });
+
+  if (!keterangan || keterangan.trim() === "") {
+    Swal.fire("Oops!", "Keterangan wajib diisi.", "warning");
+    return;
+  }
 
   try {
-    await api.delete(`/antrian/delete/${a.id}`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    });
-
-    Swal.fire("Dihapus!", `Antrian ${a.nomor_antrian} telah dihapus.`, "success");
+    await api.put(
+      `/antrian/delete/${a.id}`,
+      { keterangan },
+      { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+    );
+    Swal.fire("Dibatalkan!", `Antrian ${a.nomor_antrian} telah dibatalkan.`, "success");
     fetchAntrian();
   } catch (err) {
-    Swal.fire("Error", err.response?.data?.message || "Gagal hapus antrian", "error");
+    Swal.fire("Error", err.response?.data?.message || "Gagal membatalkan antrian", "error");
   }
 };
 </script>

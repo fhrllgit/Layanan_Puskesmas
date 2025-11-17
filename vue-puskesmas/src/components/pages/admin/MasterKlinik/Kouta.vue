@@ -76,6 +76,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const api = axios.create({
     baseURL: "http://localhost:3003/api",
@@ -109,11 +110,24 @@ const addKuota = async () => {
     try {
         await api.post("/kuota", form.value, config);
         await getKuota();
+        Swal.fire({
+            icon: "success",
+            title: "Berhasil!",
+            text: "Kouta berhasil di tambahkan",
+            timer: 1500,
+            showConfirmButton: false
+        })
         resetForm();
     } catch (err) {
-        console.error("Gagal menambah kuota:", err.response?.data?.message || err.message);
+        Swal.fire({
+            icon: "error",
+            title: "Gagal",
+            text: `Gagal menambah kouta, ${err.response?.data?.message || err.message}`
+        })
+        // console.error("Gagal menambah kouta:", err.response?.data?.message || err.message);
     }
 };
+
 
 const editKuota = (item) => {
     isEditing.value = true;

@@ -1,4 +1,6 @@
 const db = require("../config/db");
+const emitAntrianUpdate = require("../utils/emitAntrianUpdate");
+
 
 exports.getAntrianToday = (req, res) => {
   const sql = `
@@ -163,9 +165,11 @@ exports.getDokterByPoli = (req, res) => {
 
 exports.deleteAntrian = (req, res) => {
   const { id } = req.params;
+  const io = req.io
   const sql = "DELETE FROM antrian WHERE id = ?";
   db.query(sql, [id], (err, result) => {
     if (err) return res.status(500).json({ message: err.message });
+    io.emit("antrian:baru")
     res.json({ message: "Antrian berhasil dihapus" });
   });
 };

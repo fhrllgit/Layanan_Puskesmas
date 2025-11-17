@@ -9,12 +9,13 @@ router.get("/", verifyToken, allowRoles("admin", "dokter"), dokterController.get
 router.get("/jadwal", verifyToken, allowRoles("admin", "dokter"), dokterController.getJadwal);
 router.put("/jadwal/:id", verifyToken, allowRoles("admin"), dokterController.updateJadwal);
 router.delete("/jadwal/:id", verifyToken, allowRoles("admin"), dokterController.deleteJadwal);
+router.get("/jadwal-saya", verifyToken, allowRoles("dokter"), dokterController.getJadwalSaya);
 
 // layanan buat dokter 
 router.get("/antrian", verifyToken, allowRoles("dokter"), dokterController.getAntrianDokter);
 router.post("/antrian/panggil/:antrian_id", verifyToken, allowRoles("dokter"), dokterController.panggilPasien);
 router.post("/antrian/batal/:antrian_id", verifyToken, allowRoles("dokter"), dokterController.batalPasien);
 router.post("/antrian/selesai/:antrian_id", verifyToken, allowRoles("dokter"), dokterController.selesaiPasien);
-router.delete("/antrian/delete/:id", verifyToken, dokterController.hapusAntrian);
+router.put("/antrian/delete/:id", verifyToken, dokterController.hapusAntrian);
 
 module.exports = router;
