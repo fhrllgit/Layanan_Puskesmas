@@ -1,1 +1,1 @@
-<template>data obat</template>
+<template>data obat ini batal tidak ada di user story</template>

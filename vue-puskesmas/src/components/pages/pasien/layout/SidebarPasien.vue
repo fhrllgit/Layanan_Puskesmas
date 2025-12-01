@@ -2,7 +2,7 @@
   <transition name="slide-down">
       <div v-show="showNavbar" class="w-full fixed mt-2.5 z-50 justify-between px-10 items-center flex transition-all duration-300">
         <div class="flex gap-1.5 items-center">
-          <img src="../../../../../src/assets/img/logoS.png" alt="" class="w-8 h-auto object-cover">
+          <img src="../../../../../src/assets/img/logoS.png" alt="" class="w-8 h-auto rounded-full object-cover">
           <div class="flex flex-col -space-y-1">
             <span class="text-xl font-medium tracking-tight text-[#d34341]" style="font-weight: 600;">SismaCare</span>
           </div>
@@ -54,6 +54,7 @@ const menuItems = [
   { text: "Status Resep", to: "/pasien/status-resep", icon: FileText },
   { text: "Jadwal Dokter", to: "/pasien/dokter-pasien", icon: Users },
   { text: "Konsultasi", to: "/pasien/konsultasi", icon: MessageSquare },
+  // { text: "Uji Konsul", to: "/pasien/test-kosul", icon: MessageSquare },
 ];
 
 const showNavbar = ref(true);

@@ -4,7 +4,7 @@
       <SidebarPasien />
     </div>
 
-    <div class="w-full border">
+    <div class="w-full">
       <main class="">
         <router-view /> 
       </main>

@@ -21,7 +21,6 @@ CREATE TABLE users (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-
 -- poli/ umum gigi anak dll 
 CREATE TABLE poli (
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -29,7 +28,6 @@ CREATE TABLE poli (
   deskripsi TEXT,
   status ENUM('aktif', 'nonaktif') DEFAULT 'aktif'
 );
-
 
 -- kouta poli
 CREATE TABLE kuota_poli (
@@ -41,7 +39,6 @@ CREATE TABLE kuota_poli (
   max_antrian INT NOT NULL,
   FOREIGN KEY (poli_id) REFERENCES poli(id) ON DELETE CASCADE
 );
-
 
 -- jadwal dokter 
 CREATE TABLE jadwal_dokter (
@@ -107,7 +104,7 @@ CREATE TABLE resep_obat (
   pasien_id INT NOT NULL,
   dokter_id INT NOT NULL,
   apoteker_id INT DEFAULT NULL,
-  status ENUM('menunggu','siap_diambil','tidak_tersedia','selesai') DEFAULT 'menunggu',
+  status ENUM('menunggu','siap_diambil','tidak_tersedia','selesai', 'expired') DEFAULT 'menunggu',
   tanggal DATE DEFAULT (CURRENT_DATE),
   FOREIGN KEY (rekam_id) REFERENCES rekam_medis(id) ON DELETE CASCADE,
   FOREIGN KEY (pasien_id) REFERENCES users(id) ON DELETE CASCADE,
@@ -125,18 +122,6 @@ CREATE TABLE resep_obat_item (
   keterangan TEXT DEFAULT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (resep_id) REFERENCES resep_obat(id) ON DELETE CASCADE
-);
-
--- upload artikelll
-CREATE TABLE artikel_kesehatan (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  admin_id INT NOT NULL,
-  judul VARCHAR(150) NOT NULL,
-  gambar VARCHAR(255) NULL,
-  isi TEXT NOT NULL,
-  tanggal_publikasi DATE DEFAULT (CURRENT_DATE),
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (admin_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- chat konsulll online
@@ -178,4 +163,75 @@ CREATE TABLE laporan (
   FOREIGN KEY (admin_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- Artikellllll
+CREATE TABLE tipe_berita (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nama_tipe ENUM('Artikel', 'Edukasi', 'Pengumuman', 'Tips Kesehatan')
+)
+INSERT INTO tipe_berita (nama_tipe) VALUES
+('Artikel'),
+('Edukasi'),
+('Pengumuman'),
+('Tips Kesehatan');
 
+CREATE TABLE berita (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    judul VARCHAR(255) NOT NULL,
+    isi TEXT NOT NULL,
+    gambar VARCHAR(255),
+    tanggal DATE NOT NULL,
+    tipe_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (tipe_id) REFERENCES tipe_berita(id)
+);
+
+CREATE TABLE berita_poli (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    berita_id INT NOT NULL,
+    poli_id INT NOT NULL,
+    FOREIGN KEY (berita_id) REFERENCES berita(id) ON DELETE CASCADE,
+    FOREIGN KEY (poli_id) REFERENCES poli(id) ON DELETE CASCADE
+);
+
+
+
+-- koncultasi
+CREATE TABLE dokter_status (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  dokter_id INT NOT NULL,
+  status ENUM('online','busy','offline') DEFAULT 'offline',
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (dokter_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE konsultasi_online (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  pasien_id INT NOT NULL,
+  dokter_id INT NOT NULL,
+  status ENUM('ongoing','finished','cancelled') DEFAULT 'ongoing',
+  keluhan TEXT NULL,
+  diagnosis TEXT NULL,
+  saran TEXT NULL,
+  rekam_id INT DEFAULT NULL,    
+  resep_id INT DEFAULT NULL,    
+  start_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  end_time TIMESTAMP NULL,
+  FOREIGN KEY (pasien_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (dokter_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (rekam_id) REFERENCES rekam_medis(id) ON DELETE SET NULL,
+  FOREIGN KEY (resep_id) REFERENCES resep_obat(id) ON DELETE SET NULL
+);
+
+
+CREATE TABLE konsultasi_chat (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  konsultasi_id INT NOT NULL,
+  sender_id INT NOT NULL,          
+  message TEXT NOT NULL,
+  is_read TINYINT(1) DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (konsultasi_id) REFERENCES konsultasi_online(id) ON DELETE CASCADE,
+  FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE
+);

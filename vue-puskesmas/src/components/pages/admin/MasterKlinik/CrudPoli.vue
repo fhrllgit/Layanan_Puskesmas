@@ -2,7 +2,7 @@
   <div class="p-6">
     <h1 class="text-2xl font-semibold mb-4">Manajemen Poli</h1>
     <form @submit.prevent="handleSubmit" class="bg-white shadow-md p-4 rounded-md mb-6">
-      <div class="grid grid-cols-2 gap-4">
+      <div class="flex items-center gap-4">
         <div>
           <label class="block text-sm font-medium text-gray-700">Nama Poli</label>
           <input v-model="form.nama_poli" type="text" class="w-full border rounded-md p-2 mt-1" required />

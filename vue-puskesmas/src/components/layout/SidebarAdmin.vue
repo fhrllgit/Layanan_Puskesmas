@@ -101,6 +101,11 @@ const menuItems = [
     name: "Manajemen Antrian",
     icon: UserIcon,
     to: "/admin/man-antrian"
+  },
+  {
+    name: "Rekam Medis",
+    icon: UserIcon,
+    to: "/admin/rekam-medis"
   }
 
 ]

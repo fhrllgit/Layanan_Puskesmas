@@ -167,7 +167,6 @@ const formatTanggal = (tgl) => {
   });
 };
 
-
 const getIcon = (nama) => {
   const lower = nama.toLowerCase();
   if (lower.includes("umum")) return UserIcon;

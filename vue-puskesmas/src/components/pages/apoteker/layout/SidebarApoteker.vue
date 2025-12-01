@@ -16,7 +16,7 @@
           </svg>
         </span>
       </div>
-      <RouterLink to="/dokter/dashboard" class="flex gap-2 px-5 items-center py-2 mt-10 rounded-lg">
+      <RouterLink to="/apoteker/dashboard" class="flex gap-2 px-5 items-center py-2 mt-10 rounded-lg">
         <span>
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
             stroke="currentColor" class="size-5">

@@ -1,5 +1,5 @@
 <template>
-  <div class="p-6">
+  <div class="">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-xl font-bold">Manajemen Antrian Hari Ini</h2>
       <button @click="openSearchPopup" class="bg-pink-600 text-white px-4 py-2 rounded">+ Tambah Antrian</button>
@@ -310,7 +310,7 @@ const deleteAntrian = async (id) => {
     try {
       await axios.delete(`${api}/antrian/${id}`, headers());
       Swal.fire('Terhapus!', 'Antrian berhasil dihapus.', 'success');
-      loadToday(); // refresh tabel
+      loadToday(); 
     } catch (error) {
       console.error(error);
       Swal.fire('Gagal!', error.response?.data?.message || 'Terjadi kesalahan', 'error');
@@ -328,11 +328,11 @@ const closeAll = () => {
 };
 
 onMounted(() => {
-  loadPoli();
-  setInterval(() => {
-    loadToday();
-  }, 1000);
-  // loadToday();
+  loadPoli(); 
+  // setInterval(() => {
+  //   loadToday();
+  // }, 1000);
+  loadToday();
 });
 </script>
 

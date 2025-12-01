@@ -14,6 +14,9 @@ const antrianRoutes = require("./routes/antrianRoutes");
 const kuotaRoutes = require("./routes/koutaRoutes");
 const pasienRoutes = require("./routes/pasienRoutes")
 const adminRoutes = require("./routes/adminRoutes")
+const beritaRoutes = require("./routes/beritaRoutes")
+const apotkerRoutes = require("./routes/apotekerRoutes")
+const konsultasiRoutes = require("./routes/konsultasiRoutes")
 
 dotenv.config();
 
@@ -44,10 +47,30 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
   console.log("✅ Client connected:", socket.id);
 
+  // buuuuug anj
+  socket.onAny((event, data) => {
+    console.log("📩 EVENT MASUK:", event, data);
+  });
+
+  socket.on("join_room", (room) => {
+    console.log(`📌 User ${socket.id} JOIN ROOM: ${room}`);
+    socket.join(room);
+  });
+
   socket.on("disconnect", () => {
     console.log("❌ Client disconnected:", socket.id);
   });
 });
+
+
+
+// io.on("connection", (socket) => {
+//   console.log("✅ Client connected:", socket.id);
+
+//   socket.on("disconnect", () => {
+//     console.log("❌ Client disconnected:", socket.id);
+//   });
+// });
 
 app.use((req, res, next) => {
   req.io = io;
@@ -64,6 +87,9 @@ app.use("/api/antrian", antrianRoutes);
 app.use("/api/kuota", kuotaRoutes);
 app.use("/api/pasien", pasienRoutes)
 app.use("/api/admin", adminRoutes)
+app.use("/api/berita", beritaRoutes)
+app.use("/api/apoteker", apotkerRoutes)
+app.use("/api/konsultasi", konsultasiRoutes)
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

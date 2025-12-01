@@ -6,6 +6,10 @@ import AdminLayout from '@/components/layout/AdminLayout.vue'
 import PasienLayout from '@/components/pages/pasien/layout/PasienLayout.vue'
 import DokterLayout from '@/components/pages/dokter/layout/DokterLayout.vue'
 import ApotekerLayout from '@/components/pages/apoteker/layout/ApotekerLayout.vue'
+import Education from '@/components/Education.vue'
+import testKonsul from '@/components/testKonsul.vue'
+import fedbackPasien from '@/components/pages/dokter/fedbackPasien.vue'
+import DokterId from '@/components/pages/pasien/DokterId.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,6 +25,7 @@ const router = createRouter({
     children: [
       { path: 'dashboard', component: () => import('@/components/pages/admin/Dashboard.vue') },
       { path: 'man-antrian', component: () => import('@/components/pages/admin/ManajemenAntrian.vue') },
+      { path: 'rekam-medis', component: () => import('@/components/pages/admin/RekamMedis.vue') },
       // manaje pengguna
       { path: 'users/list', component: () => import('@/components/pages/admin/Users/UserList.vue')},
       { path: 'users/verify', component: () => import('@/components/pages/admin/Users/VerifyUser.vue') },
@@ -59,6 +64,7 @@ const router = createRouter({
       { path: 'status-resep', component: () => import('@/components/pages/pasien/StatusResep.vue') },
       { path: 'dokter-pasien', component: () => import('@/components/pages/pasien/JadwalDokter.vue') },
       { path: 'konsultasi', component: () => import('@/components/pages/pasien/KonsultasiOnline.vue') },
+      // { path: 'test-kosul', component: () => import('@/components/pages/pasien/testKonsul.vue') },
     ]
     },
     // apoteker
@@ -73,6 +79,26 @@ const router = createRouter({
       // { path: 'antrian', component: () => import('@/components/pages/pasien/Antrian.vue') },
     ]
     },
+    {
+      path: '/education/:id',
+      name: 'DetailBerita',
+      component: Education
+    },
+    {
+      path: '/pasien/chat/:id',
+      name: 'testKonsul',
+      component: testKonsul
+    },
+    {
+      path: '/feedback-pasien',
+      name: 'feedbackPasien',
+      component: fedbackPasien
+    },
+    {
+      path: '/dokter/:id/poli',
+      name: 'dokterId',
+      component: DokterId
+    }
     ],
 })
 

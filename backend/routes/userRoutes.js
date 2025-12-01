@@ -11,5 +11,4 @@ router.get("/pending", verifyToken, allowRoles("admin"), userController.getPendi
 router.post("/add-user", verifyToken, allowRoles("admin"), userController.addUser)
 router.put("/status/:id", verifyToken, allowRoles("admin"), userController.updateUserStatus)
 
-
 module.exports = router;

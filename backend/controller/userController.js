@@ -105,6 +105,53 @@ exports.register = (req, res) => {
   });
 };
 
+// exports.login = (req, res) => {
+//   const { email, password } = req.body;
+//   if (!email || !password)
+//     return response(400, null, "Isi email dan password", res);
+
+//   User.findByEmail(email, async (err, results) => {
+//     if (err) return response(500, null, "Server error", res);
+//     if (results.length === 0)
+//       return response(400, null, "Email tidak ditemukan", res);
+
+//     const user = results[0];
+//     const validPass = await bcrypt.compare(password, user.password);
+//     if (!validPass) return response(401, null, "Password salah", res);
+
+//     if (user.status === "pending")
+//       return response(403, null, "Akun masih menunggu validasi admin", res);
+//     if (user.status === "rejected")
+//       return response(403, null, "Akun ditolak admin", res);
+
+//     const token = jwt.sign(
+//       {
+//         id: user.id,
+//         role: user.role,
+//         email: user.email,
+//         nama: user.nama,
+//         poli_id: user.poli_id,
+//         nama_poli: user.nama_poli,
+//       },
+//       JWT_SECRET,
+//       { expiresIn: "1d" }
+//     );
+
+//     return res.status(200).json({
+//       token,
+//       user: {
+//         id: user.id,
+//         nama: user.nama,
+//         email: user.email,
+//         role: user.role,
+//         poli_id: user.poli_id,
+//         nama_poli: user.nama_poli,
+//       },
+//       message: "Login berhasil",
+//     });
+//   });
+// };
+
 exports.login = (req, res) => {
   const { email, password } = req.body;
   if (!email || !password)
@@ -137,6 +184,28 @@ exports.login = (req, res) => {
       { expiresIn: "1d" }
     );
 
+    if (user.role === "dokter") {
+      db.query(
+        "SELECT id FROM dokter_status WHERE dokter_id = ?",
+        [user.id],
+        (err, result) => {
+          if (err) console.error(err);
+
+          if (result.length === 0) {
+            db.query(
+              "INSERT INTO dokter_status (dokter_id, status, updated_at) VALUES (?, 'online', NOW())",
+              [user.id]
+            );
+          } else {
+            db.query(
+              "UPDATE dokter_status SET status='online', updated_at=NOW() WHERE dokter_id = ?",
+              [user.id]
+            );
+          }
+        }
+      );
+    }
+
     return res.status(200).json({
       token,
       user: {
@@ -152,6 +221,16 @@ exports.login = (req, res) => {
   });
 };
 
+// exports.logout = (req, res) => {
+//   const authHeader = req.headers.authorization;
+//   if (!authHeader || !authHeader.startsWith("Bearer "))
+//     return response(400, null, "Token tidak ditemukan", res);
+
+//   const token = authHeader.split(" ")[1];
+//   tokenBlacklist.push(token);
+//   response(200, null, "Logout berhasil, token diblacklist", res);
+// };
+
 exports.logout = (req, res) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer "))
@@ -159,7 +238,22 @@ exports.logout = (req, res) => {
 
   const token = authHeader.split(" ")[1];
   tokenBlacklist.push(token);
-  response(200, null, "Logout berhasil, token diblacklist", res);
+  const userId = req.user.id;
+  const userRole = req.user.role;
+
+  if (userRole === "dokter") {
+    db.query(
+      "UPDATE dokter_status SET status='offline', updated_at=NOW() WHERE dokter_id = ?",
+      [userId],
+      (err) => {
+        if (err) {
+          console.error("Gagal update status dokter:", err);
+        }
+      }
+    );
+  }
+
+  return response(200, null, "Logout berhasil, token diblacklist", res);
 };
 
 exports.getPendingUsers = (req, res) => {

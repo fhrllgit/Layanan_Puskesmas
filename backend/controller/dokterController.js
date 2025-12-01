@@ -1,5 +1,6 @@
 const db = require("../config/db");
 const emitAntrianUpdate = require("../utils/emitAntrianUpdate");
+const response = require("../response")
 const dayNumbers = {
   "Minggu": 0,
   "Senin": 1,
@@ -227,6 +228,173 @@ exports.getJadwalSaya = (req, res) => {
   });
 };
 
+exports.getJadwalHariIni = (req, res) => {
+  const dokterId = req.user.id;
+
+  const today = new Date().getDay();
+
+  const sql = `
+    SELECT 
+      jd.id,
+      jd.dokter_id,
+      jd.poli_id,
+      p.nama_poli,
+      jd.hari,
+      jd.hari_num,
+      jd.jam_mulai,
+      jd.jam_selesai
+    FROM jadwal_dokter jd
+    JOIN poli p ON jd.poli_id = p.id
+    WHERE jd.dokter_id = ? AND jd.hari_num = ?
+    ORDER BY jd.jam_mulai ASC
+  `;
+
+  db.query(sql, [dokterId, today], (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ message: "Gagal mengambil jadwal dokter untuk hari ini" });
+    }
+
+    res.json({
+      dokter_id: dokterId,
+      hari_ini: today,
+      jadwal: result
+    });
+  });
+};
+
+exports.getJadwalSetelahHariIni = (req, res) => {
+  const dokterId = req.user.id;
+  const todayNum = new Date().getDay();
+
+  const sql = `
+    SELECT 
+      jd.id,
+      jd.dokter_id,
+      u.nama AS nama_dokter,       
+      jd.poli_id,
+      p.nama_poli,
+      jd.hari,
+      jd.hari_num,
+      jd.jam_mulai,
+      jd.jam_selesai
+    FROM jadwal_dokter jd
+    JOIN poli p ON jd.poli_id = p.id
+    JOIN users u ON jd.dokter_id = u.id  -- JOIN users untuk ambil nama
+    WHERE jd.dokter_id = ?
+    ORDER BY 
+      (jd.hari_num <= ${todayNum}) ASC,
+      jd.hari_num ASC
+  `;
+
+  db.query(sql, [dokterId], (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ message: "Gagal mengambil jadwal setelah hari ini" });
+    }
+
+    res.json({
+      today: todayNum,
+      jadwal: result
+    });
+  });
+};
+
+// chat on of 
+exports.updateStatusDokter = (req, res) => {
+  const dokterId = req.user.id;       
+  const { status } = req.body;        
+
+  if (!["online", "offline", "busy"].includes(status)) {
+    return res.status(400).json({ message: "Status tidak valid" });
+  }
+
+  const sql = `
+    UPDATE dokter_status 
+    SET status = ?, updated_at = NOW()
+    WHERE dokter_id = ?
+  `;
+
+  db.query(sql, [status, dokterId], (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ message: "Gagal mengupdate status" });
+    }
+
+    res.json({
+      success: true,
+      message: "Status dokter diperbarui",
+      status
+    });
+  });
+};
+
+exports.getStatus = (req, res) => {
+  const dokterId = req.user.id; // id dokter dari token
+
+  const sql = "SELECT status FROM dokter_status WHERE dokter_id = ?";
+
+  db.query(sql, [dokterId], (err, rows) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ message: "Gagal mengambil status dokter" });
+    }
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "Status dokter tidak ditemukan" });
+    }
+
+    res.json({
+      success: true,
+      status: rows[0].status
+    });
+  });
+};
+
+exports.getDokterByPoli = (req, res) => {
+  const { poli_id } = req.params;
+
+  const sql = `
+    SELECT 
+      u.id,
+      u.nama,
+      u.email,
+      u.avatar,
+      p.nama_poli,
+      ds.status AS dokter_status
+    FROM users u
+    LEFT JOIN poli p ON u.poli_id = p.id
+    LEFT JOIN dokter_status ds ON ds.dokter_id = u.id
+    WHERE u.role = 'dokter' AND u.poli_id = ?
+  `;
+
+  db.query(sql, [poli_id], (err, results) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ msg: "Server error" });
+    }
+
+    return res.status(200).json({
+      msg: "Success",
+      data: results,
+    });
+  });
+};
+
+exports.getStatusDokter = (req, res) => {
+  const { dokter_id } = req.params;
+
+  db.query(
+    "SELECT status FROM dokter_status WHERE dokter_id = ?",
+    [dokter_id],
+    (err, results) => {
+      if (err) return response(500, null, "Server error", res);
+      if (results.length === 0)
+        return response(404, null, "Status dokter tidak ditemukan", res);
+      return response(200, results[0], "Success", res);
+    }
+  );
+};
 
 // sistem pasien
 exports.getAntrianDokter = (req, res) => {

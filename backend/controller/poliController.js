@@ -30,6 +30,22 @@ exports.getPoli = (req, res) => {
   });
 };
 
+exports.getPoliById = (req, res) => {
+  const { id } = req.params;
+
+  const sql = "SELECT * FROM poli WHERE id = ? AND status = 'aktif'";
+  db.query(sql, [id], (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ message: "Gagal mengambil data poli" });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ message: "Poli tidak ditemukan" });
+    }
+    res.status(200).json({ data: results[0] });
+  });
+};
+
 exports.updatePoli = (req, res) => {
   const { id } = req.params;
   const { nama_poli, deskripsi, status } = req.body;

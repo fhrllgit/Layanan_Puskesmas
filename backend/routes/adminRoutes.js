@@ -10,5 +10,12 @@ router.get("/pasien/search", verifyToken, allowRoles("admin"), adminController.s
 router.post("/pasien", verifyToken, allowRoles("admin"), adminController.addPasien);
 router.post("/antrian", verifyToken, allowRoles("admin"),adminController.addAntrian);
 router.delete("/antrian/:id", verifyToken, allowRoles("admin"), adminController.deleteAntrian);
+router.get("/users/admin", verifyToken, allowRoles("admin"), adminController.getUsers)
+router.get("/users/admin-filter", verifyToken, allowRoles("admin"), adminController.getUserFilteres)
+router.get("/laporan/layanan-", verifyToken, allowRoles("admin"), adminController.getLaporanLayananAdmin)
+router.get("/poli", verifyToken, allowRoles("admin"), adminController.getAllPoli);
+router.get("/dokter", verifyToken, allowRoles("admin"), adminController.getAllDokter);
+router.get("/laporan/export-pdf", verifyToken, allowRoles("admin"), adminController.exportPDF);
+router.get("/laporan/export-excel", verifyToken, allowRoles("admin"), adminController.exportExcel);
 
 module.exports = router;

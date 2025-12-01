@@ -1,6 +1,8 @@
 const db = require("../config/db");
 const emitAntrianUpdate = require("../utils/emitAntrianUpdate");
-
+const response = require("../response");
+const PDFDocument = require("pdfkit");
+const ExcelJS = require("exceljs");
 
 exports.getAntrianToday = (req, res) => {
   const sql = `
@@ -165,11 +167,357 @@ exports.getDokterByPoli = (req, res) => {
 
 exports.deleteAntrian = (req, res) => {
   const { id } = req.params;
-  const io = req.io
+  const io = req.io;
   const sql = "DELETE FROM antrian WHERE id = ?";
   db.query(sql, [id], (err, result) => {
     if (err) return res.status(500).json({ message: err.message });
-    io.emit("antrian:baru")
+    io.emit("antrian:baru");
     res.json({ message: "Antrian berhasil dihapus" });
+  });
+};
+
+exports.getUsers = (req, res) => {
+  const sql = "SELECT * FROM users";
+  db.query(sql, (err, result) => {
+    if (err) return res.status(500).json({ message: "Database error" });
+    res.json(result);
+  });
+};
+
+exports.getUserFilteres = (req, res) => {
+  const { search, role } = req.query;
+  try {
+    let sql = `SELECT id, nama, email, status, role, created_at FROM users WHERE 1=1 `;
+    const params = [];
+    if (search && search.trim() !== "") {
+      sql += `AND nama LIKE ?`;
+      params.push(`%${search}%`);
+    }
+    if (role && role.trim() !== "") {
+      sql += `AND role = ?`;
+      params.push(role);
+    }
+    sql += ` ORDER BY created_at DESC`;
+    db.query(sql, params, (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Database Error", error: err });
+      }
+      res.json({
+        count: result.length,
+        data: result,
+      });
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+exports.getLaporanLayananAdmin = (req, res) => {
+  const { poli_id, dokter_id, periode, tanggal, bulan, tahun } = req.query;
+
+  let sql = `
+    SELECT 
+      rm.id AS rekam_id,
+      rm.tanggal AS tanggal_kunjungan,
+      rm.keluhan,
+      rm.diagnosis,
+      rm.tindakan,
+      p.nama_poli,
+      d.nama AS nama_dokter,
+      ps.nama AS nama_pasien,
+      ro.id AS resep_id,
+      roi.nama_obat,
+      roi.dosis,
+      roi.jumlah,
+      roi.keterangan AS keterangan_obat
+    FROM rekam_medis rm
+    JOIN poli p ON rm.poli_id = p.id
+    JOIN users d ON rm.dokter_id = d.id
+    JOIN users ps ON rm.pasien_id = ps.id
+    LEFT JOIN resep_obat ro ON rm.id = ro.rekam_id
+    LEFT JOIN resep_obat_item roi ON ro.id = roi.resep_id
+    WHERE 1=1
+  `;
+
+  const params = [];
+
+  if (periode === "all" || !periode) {
+  }
+  if (poli_id) {
+    sql += ` AND rm.poli_id = ?`;
+    params.push(poli_id);
+  }
+
+  if (periode === "range" && req.query.from && req.query.to) {
+    sql += ` AND DATE(rm.tanggal) BETWEEN ? AND ?`;
+    params.push(req.query.from, req.query.to);
+  }
+
+  if (dokter_id) {
+    sql += ` AND rm.dokter_id = ?`;
+    params.push(dokter_id);
+  }
+
+  if (periode === "harian" && tanggal) {
+    sql += ` AND DATE(rm.tanggal) = ?`;
+    params.push(tanggal);
+  }
+
+  if (periode === "bulanan" && bulan && tahun) {
+    sql += ` AND MONTH(rm.tanggal) = ? AND YEAR(rm.tanggal) = ?`;
+    params.push(bulan, tahun);
+  }
+
+  if (periode === "mingguan" && tahun) {
+    sql += ` AND YEARWEEK(rm.tanggal, 1) = YEARWEEK(?, 1)`;
+    params.push(`${tahun}-${bulan ?? "01"}-01`);
+  }
+
+  sql += ` ORDER BY rm.tanggal DESC`;
+
+  db.query(sql, params, (err, results) => {
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).json({ message: "Database error", error: err });
+    }
+
+    const map = new Map();
+
+    results.forEach((row) => {
+      if (!map.has(row.rekam_id)) {
+        map.set(row.rekam_id, {
+          rekam_id: row.rekam_id,
+          tanggal_kunjungan: row.tanggal_kunjungan,
+          poli: row.nama_poli,
+          dokter: row.nama_dokter,
+          pasien: row.nama_pasien,
+          keluhan: row.keluhan,
+          diagnosis: row.diagnosis,
+          tindakan: row.tindakan,
+          obat: [],
+        });
+      }
+
+      if (row.nama_obat) {
+        map.get(row.rekam_id).obat.push({
+          nama_obat: row.nama_obat,
+          dosis: row.dosis,
+          jumlah: row.jumlah,
+          keterangan: row.keterangan_obat,
+        });
+      }
+    });
+    res.json({
+      count: map.size,
+      data: Array.from(map.values()),
+    });
+  });
+};
+
+exports.getAllPoli = (req, res) => {
+  const sql = `
+    SELECT id, nama_poli 
+    FROM poli 
+    WHERE status = 'aktif'
+    ORDER BY nama_poli ASC
+  `;
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Error getAllPoli:", err);
+      return res.status(500).json({ message: "Database error" });
+    }
+
+    res.json(results);
+  });
+};
+
+exports.getAllDokter = (req, res) => {
+  const sql = `
+    SELECT 
+      u.id, 
+      u.nama, 
+      p.nama_poli 
+    FROM users u
+    LEFT JOIN poli p ON p.id = u.poli_id
+    WHERE u.role = 'dokter' AND u.status = 'active'
+    ORDER BY u.nama ASC
+  `;
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Error getAllDokter:", err);
+      return res.status(500).json({ message: "Database error" });
+    }
+
+    res.json(results);
+  });
+};
+
+exports.exportPDF = (req, res) => {
+  const { poli_id, dokter_id, from, to } = req.query;
+  let sql = `
+    SELECT 
+      rm.id AS rekam_id,
+      rm.tanggal,
+      rm.keluhan,
+      rm.diagnosis,
+      rm.tindakan,
+      p.nama_poli,
+      d.nama AS nama_dokter,
+      roi.nama_obat,
+      roi.dosis,
+      roi.jumlah,
+      roi.keterangan AS ket_obat
+    FROM rekam_medis rm
+    JOIN poli p ON p.id = rm.poli_id
+    JOIN users d ON d.id = rm.dokter_id
+    LEFT JOIN resep_obat ro ON ro.rekam_id = rm.id
+    LEFT JOIN resep_obat_item roi ON roi.resep_id = ro.id
+    WHERE 1=1
+  `;
+
+  const params = [];
+  if (poli_id) { sql += " AND rm.poli_id = ?"; params.push(poli_id); }
+  if (dokter_id) { sql += " AND rm.dokter_id = ?"; params.push(dokter_id); }
+  if (from && to) { sql += " AND DATE(rm.tanggal) BETWEEN ? AND ?"; params.push(from, to); }
+
+  db.query(sql, params, (err, rows) => {
+    if (err) return res.status(500).json({ error: err });
+
+    const PDFDocument = require("pdfkit");
+    const doc = new PDFDocument({ margin: 30, size: "A4" });
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", "attachment; filename=laporan_layanan.pdf");
+    doc.pipe(res);
+    doc.fontSize(20).text("Laporan Layanan SISMA", { align: "center" });
+    // doc.font("Helvetica-Bold").fontSize(20).text("Laporan Layanan SISMA", { align: "center" });
+    doc.moveDown();
+
+    const tableTop = 120;
+    const col = {
+      tanggal: 30,
+      poli: 100,
+      dokter: 180,
+      keluhan: 260,
+      diagnosis: 340,
+      tindakan: 420,
+      obat: 500,
+    };
+
+    doc.fontSize(11).text("Tanggal", col.tanggal, tableTop);
+    doc.text("Poli", col.poli, tableTop);
+    doc.text("Dokter", col.dokter, tableTop);
+    doc.text("Keluhan", col.keluhan, tableTop);
+    doc.text("Diagnosis", col.diagnosis, tableTop);
+    doc.text("Tindakan", col.tindakan, tableTop);
+    doc.text("Obat", col.obat, tableTop);
+    doc.moveTo(30, tableTop + 15).lineTo(560, tableTop + 15).stroke();
+
+    let y = tableTop + 25;
+    rows.forEach(row => {
+      if (y > 750) {
+        doc.addPage();
+        y = 50;
+      }
+      const obatText = row.nama_obat
+        ? `${row.nama_obat} (${row.dosis}) x${row.jumlah}\n${row.ket_obat}`
+        : "-";
+      doc.fontSize(10)
+        .text(formatDate(row.tanggal), col.tanggal, y, { width: 60 })
+        .text(row.nama_poli, col.poli, y, { width: 70 })
+        .text(row.nama_dokter, col.dokter, y, { width: 70 })
+        .text(row.keluhan, col.keluhan, y, { width: 70 })
+        .text(row.diagnosis, col.diagnosis, y, { width: 70 })
+        .text(row.tindakan, col.tindakan, y, { width: 70 })
+        .text(obatText, col.obat, y, { width: 80 });
+
+      y += 45;
+    });
+
+    doc.end();
+  });
+};
+
+function formatDate(date) {
+  const d = new Date(date);
+  return `${String(d.getDate()).padStart(2, "0")}/${
+    String(d.getMonth() + 1).padStart(2, "0")
+  }/${String(d.getFullYear()).slice(2)}`;
+}
+
+exports.exportExcel = (req, res) => {
+  const { poli_id, dokter_id, from, to } = req.query;
+
+  let sql = `
+    SELECT 
+      rm.tanggal,
+      p.nama_poli,
+      d.nama AS nama_dokter,
+      rm.keluhan,
+      rm.diagnosis,
+      rm.tindakan,
+      roi.nama_obat,
+      roi.dosis,
+      roi.jumlah,
+      roi.keterangan AS ket_obat
+    FROM rekam_medis rm
+    JOIN poli p ON p.id = rm.poli_id
+    JOIN users d ON d.id = rm.dokter_id
+    LEFT JOIN resep_obat ro ON ro.rekam_id = rm.id
+    LEFT JOIN resep_obat_item roi ON roi.resep_id = ro.id
+    WHERE 1=1
+  `;
+
+  const params = [];
+
+  if (poli_id) {
+    sql += " AND rm.poli_id = ?";
+    params.push(poli_id);
+  }
+
+  if (dokter_id) {
+    sql += " AND rm.dokter_id = ?";
+    params.push(dokter_id);
+  }
+
+  if (from && to) {
+    sql += " AND DATE(rm.tanggal) BETWEEN ? AND ?";
+    params.push(from, to);
+  }
+
+  db.query(sql, params, async (err, rows) => {
+    if (err) return res.status(500).json({ error: err });
+
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet("Laporan Layanan");
+
+    sheet.columns = [
+      { header: "Tanggal", key: "tanggal", width: 15 },
+      { header: "Poli", key: "nama_poli", width: 15 },
+      { header: "Dokter", key: "nama_dokter", width: 20 },
+      { header: "Keluhan", key: "keluhan", width: 20 },
+      { header: "Diagnosis", key: "diagnosis", width: 20 },
+      { header: "Tindakan", key: "tindakan", width: 20 },
+      { header: "Nama Obat", key: "nama_obat", width: 20 },
+      { header: "Dosis", key: "dosis", width: 10 },
+      { header: "Jumlah", key: "jumlah", width: 10 },
+      { header: "Keterangan Obat", key: "ket_obat", width: 25 },
+    ];
+
+    rows.forEach((r) => sheet.addRow(r));
+
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=laporan_layanan.xlsx"
+    );
+
+    await workbook.xlsx.write(res);
+    res.end();
   });
 };

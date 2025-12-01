@@ -52,6 +52,7 @@ const menuItems = [
   { text: "Antrian Pasien", to: "/dokter/dokter-pasien", icon: List },
   { text: "Rekam Medis", to: "/dokter/rekam-medis", icon: ClockIcon },
   { text: "Profil", to: "/dokter/profil", icon: FileText },
+  { text: "Konsultasi Pasien", to: "/feedback-pasien", icon: FileText }
 ];
 
 const showNavbar = ref(true);
