@@ -173,6 +173,57 @@ exports.getDetailResep = (req, res) => {
   });
 };
 
+// pasien tebus resep dokter
+exports.getStatusKonsultasi = (req, res) => {
+  const pasien_id = req.user.id;
+
+  const sql = `
+    SELECT r.id, r.status, r.tanggal, r.siap_diambil_at,
+           d.nama AS dokter_nama
+    FROM resep_konsultasi r
+    JOIN users d ON r.dokter_id = d.id
+    WHERE r.pasien_id = ?
+    ORDER BY r.tanggal DESC
+  `;
+
+  db.query(sql, [pasien_id], (err, rows) => {
+    if (err) return res.status(500).json({ msg: "Terjadi kesalahan", error: err });
+
+    if (rows.length === 0) {
+      return res.json({ msg: "Belum ada tebusan resep konsultasi", data: [] });
+    }
+
+    res.json({ msg: "Daftar status resep konsultasi", data: rows });
+  });
+};
+
+exports.getDetailResepKonsultasiPasien = (req, res) => {
+  const { id } = req.params;
+
+  const sqlResep = `
+    SELECT r.*, 
+           p.nama AS pasien_nama, 
+           d.nama AS dokter_nama
+    FROM resep_konsultasi r
+    JOIN users p ON p.id = r.pasien_id
+    JOIN users d ON d.id = r.dokter_id
+    WHERE r.id = ?
+  `;
+
+  const sqlItem = `
+    SELECT * FROM resep_konsultasi_item WHERE resep_konsultasi_id = ?
+  `;
+
+  db.query(sqlResep, [id], (err, resep) => {
+    if (err) return res.status(500).json({ error: err });
+
+    db.query(sqlItem, [id], (err, items) => {
+      if (err) return res.status(500).json({ error: err });
+
+      res.json({ resep: resep[0], items });
+    });
+  });
+};
 
 // exports.getRiwayatKunjungan = (req, res) => {
 //   console.log("Controller dipanggil");

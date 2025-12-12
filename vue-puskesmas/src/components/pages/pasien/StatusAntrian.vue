@@ -1,5 +1,5 @@
 <template>
-    <div class="h-screen border">
+    <div class="h-screen">
         <div class="px-4 sm:px-6 md:px-10 mt-25">
             <h2 class="text-4xl font-semibold mb-5">Antrian Sekarang</h2>
             <div v-if="loading" class="text-gray-500">Memuat data...</div>

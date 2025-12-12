@@ -198,7 +198,7 @@
                     Tidak ada poli untuk hari ini / libur.
                   </div>
                   <div v-else v-for="item in jadwalDokter" class="flex">
-                    <span class="sm:ml-4 text-gray-600">Dr. {{ item.nama_dokter }}</span>
+                    <span class="sm:ml-4 text-gray-600">{{ item.nama_poli }}</span>
                   </div>
                 </div>
               </li>
@@ -257,7 +257,7 @@
                 Diawasi oleh Board of Medical Excellence
               </h2>
               <p class="text-gray-600 text-lg leading-relaxed">
-                Seluruh prosedur medis dan tenaga kesehatan di Halodoc dipastikan memenuhi standar regulasi dan etika
+                Seluruh prosedur medis dan tenaga kesehatan di Sisma dipastikan memenuhi standar regulasi dan etika
                 layanan kesehatan tertinggi.
               </p>
             </div>
@@ -285,7 +285,7 @@
                 alt="Dr. Irwan Heriyanto" class="w-52 h-72 object-cover rounded-lg shadow-2xl" />
               <div class="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-max">
                 <div class="bg-purple-600 text-white px-4 py-2 rounded-full shadow-lg">
-                  <p class="font-bold text-sm">Dr. Irwan Heriyanto</p>
+                  <p class="font-bold text-sm">Dr. Stevanus Firiri</p>
                 </div>
                 <div
                   class="bg-yellow-400 text-purple-900 px-3 py-1 rounded-full text-xs font-semibold mt-1 text-center">
@@ -299,7 +299,7 @@
                 alt="Wawan Setiawan" class="w-48 h-64 object-cover rounded-lg shadow-xl" />
               <div class="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-max">
                 <div class="bg-purple-600 text-white px-4 py-2 rounded-full shadow-lg">
-                  <p class="font-bold text-sm">Wawan Setiawan</p>
+                  <p class="font-bold text-sm">Anang Setiawan</p>
                 </div>
                 <div
                   class="bg-yellow-400 text-purple-900 px-3 py-1 rounded-full text-xs font-semibold mt-1 text-center whitespace-nowrap">

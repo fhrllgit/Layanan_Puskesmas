@@ -1,5 +1,8 @@
-const db = require("../config/db"); 
+const db = require("../config/db");
 const moment = require("moment");
+const PDFDocument = require("pdfkit");
+const fs = require("fs");
+const path = require("path");
 
 exports.mulaiChat = (req, res) => {
   const pasien_id = req.user.id;
@@ -73,8 +76,8 @@ exports.kirimPesan = (req, res) => {
         id: result.insertId,
         konsultasi_id,
         sender_id,
-        sender: req.user.role, 
-        pesan: message, 
+        sender: req.user.role,
+        pesan: message,
         created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
       });
 
@@ -114,9 +117,11 @@ exports.getChat = (req, res) => {
   const { konsultasi_id } = req.params;
   const dokter_id = req.user.id;
 
+  // Tandai chat sudah dibaca
   const sqlUpdate = `UPDATE konsultasi_chat SET is_read = 1 WHERE konsultasi_id = ? AND sender_id != ?`;
   db.query(sqlUpdate, [konsultasi_id, dokter_id]);
 
+  // Ambil semua chat termasuk type & resep_id
   const sql = `
     SELECT c.*, u.nama, u.role 
     FROM konsultasi_chat c
@@ -126,12 +131,15 @@ exports.getChat = (req, res) => {
   `;
   db.query(sql, [konsultasi_id], (err, results) => {
     if (err) return res.status(500).json({ msg: err.message });
+
     const formatted = results.map((r) => ({
       id: r.id,
       konsultasi_id: r.konsultasi_id,
       sender_id: r.sender_id,
       sender: r.role,
       pesan: r.message,
+      type: r.type, // tambahkan ini
+      resep_id: r.resep_id, // tambahkan ini
       created_at: r.created_at,
     }));
 
@@ -156,7 +164,7 @@ exports.daftarKonsultasiAktif = (req, res) => {
     return res.status(200).json({ data: results });
   });
 };
- 
+
 exports.tandaiDibaca = (req, res) => {
   const { id } = req.params;
   const user_id = req.user.id;
@@ -208,7 +216,7 @@ exports.getKonsultasiDetail = (req, res) => {
 };
 
 exports.getTotalKonsultasiHariIni = (req, res) => {
-  const dokterId = req.params.dokter_id; 
+  const dokterId = req.params.dokter_id;
 
   const sql = `
     SELECT COUNT(*) AS total
@@ -225,9 +233,234 @@ exports.getTotalKonsultasiHariIni = (req, res) => {
     }
     res.json({
       success: true,
-      total: result[0].total
+      total: result[0].total,
     });
   });
 };
 
+exports.kirimResep = async (req, res) => {
+  try {
+    console.log("=== DEBUG BACKEND: DATA MASUK ===");
+    console.log(req.body);
 
+    const { konsultasi_id, obat_list, pasien_id } = req.body;
+    const dokter_id = req.user.id;
+
+    if (!obat_list || obat_list.length === 0) {
+      return res.status(400).json({ msg: "List obat kosong" });
+    }
+
+    const sqlCreateResep = `
+      INSERT INTO resep_konsultasi (konsultasi_id, pasien_id, dokter_id, status, tanggal)
+      VALUES (?, ?, ?, 'menunggu', NOW())
+    `;
+
+    const resultResep = await new Promise((resolve, reject) => {
+      db.query(
+        sqlCreateResep,
+        [konsultasi_id, pasien_id, dokter_id],
+        (err, result) => {
+          if (err) reject(err);
+          else resolve(result);
+        }
+      );
+    });
+
+    const resep_id = resultResep.insertId;
+
+    const sqlItem = `
+      INSERT INTO resep_konsultasi_item 
+      (resep_konsultasi_id, nama_obat, dosis, jumlah, keterangan, created_at)
+      VALUES (?, ?, ?, ?, ?, NOW())
+    `;
+
+    for (const item of obat_list) {
+      await new Promise((resolve, reject) => {
+        db.query(
+          sqlItem,
+          [resep_id, item.nama_obat, item.dosis, item.jumlah, item.keterangan],
+          (err) => {
+            if (err) reject(err);
+            else resolve();
+          }
+        );
+      });
+    }
+
+    const sqlChat = `
+      INSERT INTO konsultasi_chat (konsultasi_id, sender_id, message, type, resep_id)
+      VALUES (?, ?, ?, 'resep', ?)
+    `;
+    const messageText =
+      "[RESEP]";
+
+    await new Promise((resolve, reject) => {
+      db.query(
+        sqlChat,
+        [konsultasi_id, dokter_id, messageText, resep_id],
+        (err) => {
+          if (err) reject(err);
+          else resolve();
+        }
+      );
+    });
+
+    res.status(200).json({
+      msg: "Resep online berhasil dikirim",
+      resep_id,
+    });
+  } catch (err) {
+    console.log("ERROR KIRIM RESEP:", err);
+    res.status(500).json({ msg: err.message });
+  }
+};
+
+exports.getResepById = (req, res) => {
+  const { id } = req.params;
+
+  const sqlResep = `SELECT * FROM resep_konsultasi WHERE id=?`;
+  const sqlItem = `SELECT * FROM resep_konsultasi_item WHERE resep_konsultasi_id=?`;
+
+  db.query(sqlResep, [id], (err, resep) => {
+    if (err) return res.status(500).json({ msg: err.message });
+
+    db.query(sqlItem, [id], (err, items) => {
+      if (err) return res.status(500).json({ msg: err.message });
+
+      res.json({
+        resep: resep[0],
+        items,
+      });
+    });
+  });
+};
+
+exports.tebusPuskesmas = (req, res) => {
+  const { id } = req.params; // resep_id
+  const pasien_id = req.user.id;
+
+  const sql = `
+    UPDATE resep_konsultasi 
+    SET status = 'menunggu', apoteker_id = NULL 
+    WHERE id = ? AND pasien_id = ?
+  `;
+
+  db.query(sql, [id, pasien_id], (err, result) => {
+    if (err) return res.status(500).json({ msg: err.message });
+
+    // chat notifikasi
+    const sqlChat = `
+      INSERT INTO konsultasi_chat (konsultasi_id, sender_id, message, type)
+      VALUES ((SELECT konsultasi_id FROM resep_konsultasi WHERE id=?), ?, '[RESEP] Pasien ingin menebus resep di Apotek Puskesmas', 'resep')
+    `;
+
+    db.query(sqlChat, [id, pasien_id]);
+
+    res.json({
+      msg: "Resep dikirim ke Apotek Puskesmas (online)",
+      status: "menunggu",
+    });
+  });
+};
+
+exports.tebusLuar = (req, res) => {
+  try {
+    const { id } = req.params;
+    const pasien_id = req.user?.id;
+
+    if (!pasien_id) return res.status(401).json({ msg: "Unauthorized" });
+
+    const sqlResep = `SELECT * FROM resep_konsultasi WHERE id = ? AND pasien_id = ?`;
+    const sqlItems = `SELECT * FROM resep_konsultasi_item WHERE resep_konsultasi_id = ?`;
+
+    db.query(sqlResep, [id, pasien_id], (err, resepData) => {
+      if (err) return res.status(500).json({ msg: err.message });
+      if (resepData.length === 0)
+        return res.status(404).json({ msg: "Resep tidak ditemukan" });
+
+      db.query(sqlItems, [id], (err, items) => {
+        if (err) return res.status(500).json({ msg: err.message });
+
+        const doc = new PDFDocument({ margin: 40, size: "A4" });
+        res.setHeader(
+          "Content-Disposition",
+          `attachment; filename=resep_${id}.pdf`
+        );
+        res.setHeader("Content-Type", "application/pdf");
+
+        doc.pipe(res);
+
+        const r = resepData[0];
+        const tanggal = r.tanggal
+          ? new Date(r.tanggal).toLocaleDateString()
+          : "N/A";
+        doc.text(`Tanggal: ${tanggal}`);
+        doc.fontSize(20).text("PUSKESMAS SISMA", { align: "center" });
+        doc.fontSize(16).text("Resep Dokter", { align: "center" });
+        doc.moveDown();
+        doc
+          .fontSize(12)
+          // .text(`ID Resep: ${id}`)
+          .text(`Nama Dokter: ${r.dokter_nama || "N/A"}`)
+          // .text(`Tanggal: ${tanggal}`)
+          .moveDown();
+
+        const tableTop = doc.y;
+        const itemSpacing = 20;
+        doc.fontSize(12).text("No", 40, tableTop);
+        doc.text("Nama Obat", 80, tableTop);
+        doc.text("Dosis", 250, tableTop);
+        doc.text("Jumlah", 320, tableTop);
+        doc.text("Keterangan", 390, tableTop);
+        doc.moveDown();
+
+        doc
+          .moveTo(40, tableTop + 15)
+          .lineTo(550, tableTop + 15)
+          .stroke();
+
+        let y = tableTop + 25;
+        items.forEach((item, i) => {
+          doc.text(i + 1, 40, y);
+          doc.text(item.nama_obat || "-", 80, y);
+          doc.text(item.dosis || "-", 250, y);
+          doc.text(item.jumlah || "-", 320, y);
+          doc.text(item.keterangan || "-", 390, y);
+          y += itemSpacing;
+        });
+
+        doc.end();
+      });
+    });
+  } catch (err) {
+    console.error("UNCAUGHT ERROR:", err);
+    res.status(500).json({ msg: err.message });
+  }
+};
+
+exports.getStatusDokter = (req, res) => {
+  const dokterId = req.params.id;
+
+  const sql = "SELECT status FROM dokter_status WHERE dokter_id = ? ORDER BY updated_at DESC LIMIT 1";
+
+  db.query(sql, [dokterId], (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ success: false, message: "Server error" });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Status dokter tidak ditemukan",
+        status: "offline"
+      });
+    }
+
+    return res.json({
+      success: true,
+      dokter_id: dokterId,
+      status: result[0].status
+    });
+  });
+};

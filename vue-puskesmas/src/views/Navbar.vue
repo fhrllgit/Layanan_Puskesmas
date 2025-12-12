@@ -2,7 +2,7 @@
   <transition name="slide-down">
       <div v-show="showNavbar" class="w-full fixed mt-2.5 z-50 justify-between px-10 items-center flex transition-all duration-300">
         <div class="flex gap-1.5 items-center">
-          <img src="../../../../../src/assets/img/logoS.png" alt="" class="w-8 h-auto object-cover">
+          <img src="../../../../../src/assets/img/logoS.png" alt="" class="w-8 h-auto rounded-full object-cover">
           <div class="flex flex-col -space-y-1">
             <span class="text-xl font-medium tracking-tight text-[#d34341]" style="font-weight: 600;">SismaCare</span>
           </div>
@@ -16,9 +16,9 @@
             <p class="text-sm tracking-tight pr-2">{{ item.text }}</p>
           </RouterLink>
         </div>
-        <div @click="handleLogout"
+        <div @click="$router.push('/login')"
           class="flex items-center gap-6 px-5 py-2 bg-[#d34341]  hover:bg-[#d4322f] cursor-pointer text-white rounded-3xl">
-          <button class="cursor-pointer">Logout</button>
+          <button class="cursor-pointer">Login</button>
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
             class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
@@ -47,12 +47,12 @@ import {
 const api_url = "http://localhost:3003";
 
 const menuItems = [
-  { text: "Beranda", to: "/dokter/dashboard", icon: HomeIcon },
-  { text: "Jadwal Saya", to: "/dokter/jadwal-dokter", icon: ClipboardIcon },
-  { text: "Antrian Pasien", to: "/dokter/dokter-pasien", icon: List },
-  { text: "Rekam Medis", to: "/dokter/rekam-medis", icon: ClockIcon },
-  { text: "Profil", to: "/dokter/profil", icon: FileText },
-  { text: "Konsultasi Pasien", to: "/feedback-pasien", icon: FileText }
+  { text: "Beranda", to: "/pasien/dashboard", icon: HomeIcon },
+  { text: "Layanan", to: "/pasien/daftar-poli", icon: ClipboardIcon },
+  { text: "Edukasi", to: "/pasien/status-antrian", icon: List },
+  { text: "Contact", to: "/pasien/riwayat-kunjungan", icon: ClockIcon },
+  // { text: "Resep Konsultasi", to: "/pasien/resep-konsultasi", icon: MessageSquare },
+  // { text: "Uji Konsul", to: "/pasien/test-kosul", icon: MessageSquare },
 ];
 
 const showNavbar = ref(true);
@@ -76,41 +76,11 @@ onBeforeUnmount(() => {
   window.removeEventListener("scroll", handleScroll);
 });
 
-const handleLogout = async () => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    Swal.fire({ icon: "warning", title: "Oops...", text: "Kamu belum login!" });
-    return;
-  }
-
-  try {
-    await axios.post(
-      `${api_url}/api/users/logout`,
-      {},
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-
-    Swal.fire({
-      icon: "success",
-      title: "Logout berhasil!",
-      showConfirmButton: false,
-      timer: 1500,
-    }).then(() => {
-      window.location.href = "/login";
-    });
-  } catch (err) {
-    console.error("Logout gagal:", err);
-    Swal.fire({ icon: "error", title: "Gagal logout", text: "Terjadi kesalahan saat logout" });
-  }
-};
 </script>
 
 <style scoped>
 .router-link-active {
-  background-color: #d343418a;
+  background-color: #d3434158;
   color: #d34341;
   border-radius: 1rem;
   font-weight: 500;
@@ -120,9 +90,8 @@ const handleLogout = async () => {
   color: #fff;
   border-radius: 9999px;
 }
-
 .router-link-active:hover {
-  background-color: #d343416a;
+  background-color: #d3434190;
 }
 
 .slide-down-enter-active,

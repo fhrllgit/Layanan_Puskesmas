@@ -8,6 +8,10 @@ router.get("/jadwal/hari-ini", verifyToken, allowRoles("pasien"), pasienControll
 router.get("/riwayat", verifyToken, allowRoles("pasien"), pasienController.getRiwayatKunjungan);
 router.get("/status-obat", verifyToken, allowRoles("pasien"), pasienController.getStatusObat);
 router.get("/resep/:id/detail", verifyToken, allowRoles("pasien"), pasienController.getDetailResep);
+// status obat konsultasi 
+router.get("/konsultasi/status", verifyToken, allowRoles("pasien"), pasienController.getStatusKonsultasi);
+router.get("/konsultasi/detail/:id", verifyToken, allowRoles("pasien"), pasienController.getDetailResepKonsultasiPasien);
+
 
 // router.get("/riwayat", pasienController.getRiwayatKunjungan);
 

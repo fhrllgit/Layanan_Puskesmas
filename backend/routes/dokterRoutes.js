@@ -14,7 +14,7 @@ router.get("/jadwal-saya/hari-ini", verifyToken, allowRoles("dokter"), dokterCon
 router.get("/jadwal-saya/setelah-hari-ini", verifyToken, allowRoles("dokter"), dokterController.getJadwalSetelahHariIni);
 router.get("/by-poli/:poli_id", verifyToken, allowRoles("pasien"), dokterController.getDokterByPoli);
 router.get("/status/:dokter_id", verifyToken, allowRoles("pasien"), dokterController.getStatusDokter);
-router.put("/status", verifyToken, allowRoles("dokter"), dokterController.updateStatusDokter);
+router.put("/status", verifyToken, allowRoles("dokter", "pasien"), dokterController.updateStatusDokter);
 router.get("/status-saya", verifyToken, allowRoles("dokter"), dokterController.getStatus);
 
 // layanan buat dokter 

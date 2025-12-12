@@ -1,7 +1,10 @@
 <template>
     <div class="h-screen">
         <div class="px-4 sm:px-6 md:px-10 h-full mt-25">
-            <h1 class="text-3xl font-bold mb-6 text-gray-800">Status Obat</h1>
+            <div @click="$router.push('/pasien/resep-konsultasi')" class="flex justify-between items-center mb-5">
+                <h1 class="text-3xl font-bold mb-6 text-gray-800">Status Obat</h1>
+                <button class="flex cursor-pointer shadow-lg px-5 py-2 rounded-3xl bg-gradient-to-r bg-[#d34341] hover:bg-[#d81714] text-white text-sm font-medium">Resep Konsultasi</button>
+            </div>
 
             <div v-if="statusObat.length === 0"
                 class="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">

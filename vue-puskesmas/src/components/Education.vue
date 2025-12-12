@@ -2,7 +2,7 @@
     <div>
         <div class="px-4 sm:px-6  md:px-20 min-h-screen h-full">
             <div class="flex items-center gap-5 text-xs mt-20">
-                <button class="text-[#d34341] cursor-pointer">Home</button>
+                <button @click="$router.push('/pasien/dashboard')" class="text-[#d34341] cursor-pointer">Home</button>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3"
                     stroke="currentColor" class="size-3">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
@@ -48,7 +48,7 @@
 import axios from 'axios';
 import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
-
+import router from '@/router';
 
 const dataDetail = ref([])
 const token = localStorage.getItem("token")

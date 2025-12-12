@@ -235,3 +235,6 @@ CREATE TABLE konsultasi_chat (
   FOREIGN KEY (konsultasi_id) REFERENCES konsultasi_online(id) ON DELETE CASCADE,
   FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+
+type VARCHAR(20) DEFAULT 'text';

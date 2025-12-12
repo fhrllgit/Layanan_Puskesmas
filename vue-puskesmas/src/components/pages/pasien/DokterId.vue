@@ -110,14 +110,15 @@
                                         </span>
                                     </div>
 
-                                    <button @click="mulaiKonsultasi(d.id)" :disabled="d.status !== 'online'" :class="[
+                                    <!-- <button @click="mulaiKonsultasi(d.id)" :disabled="d.status !== 'online'" :class="[
                                         'px-6 py-2 rounded-lg font-medium text-sm transition-colors',
                                         d.status === 'online'
                                             ? 'bg-gradient-to-r cursor-pointer from-[#d34341] to-[#d34341ea] text-white'
                                             : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                     ]">
                                         Chat
-                                    </button>
+                                    </button> -->
+                                    <button @click="mulaiKonsultasi(d.id)" class="px-6 py-2 rounded-lg font-medium text-sm transition-colors bg-gradient-to-r cursor-pointer from-[#d34341] to-[#d34341ea] text-white">Chat</button>
                                 </div>
                             </div>
                         </div>
@@ -208,7 +209,7 @@ const mulaiKonsultasi = async (dokter_id) => {
             keluhan: "-"
         });
         const konsultasi_id = res.data.konsultasi_id;
-        router.push(`/pasien/chat/${konsultasi_id}`);
+        router.push(`/pasien/chat/${konsultasi_id}?dokter=${dokter_id}`);
     } catch (err) {
         console.error(err);
     }

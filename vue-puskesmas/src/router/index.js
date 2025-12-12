@@ -7,7 +7,7 @@ import PasienLayout from '@/components/pages/pasien/layout/PasienLayout.vue'
 import DokterLayout from '@/components/pages/dokter/layout/DokterLayout.vue'
 import ApotekerLayout from '@/components/pages/apoteker/layout/ApotekerLayout.vue'
 import Education from '@/components/Education.vue'
-import testKonsul from '@/components/testKonsul.vue'
+import testKonsul from '@/components/pages/pasien/testKonsul.vue'
 import fedbackPasien from '@/components/pages/dokter/fedbackPasien.vue'
 import DokterId from '@/components/pages/pasien/DokterId.vue'
 
@@ -37,6 +37,7 @@ const router = createRouter({
       { path: 'data-dokter', component: () => import('@/components/pages/admin/MasterKlinik/DataDokter.vue') },
       { path: 'jadwal-dokter', component: () => import('@/components/pages/admin/MasterKlinik/JadwalDokter.vue') },
       { path: 'kouta', component: () => import('@/components/pages/admin/MasterKlinik/Kouta.vue') },
+      { path: 'berita-input', component: () => import('@/components/pages/admin/Berita.vue') },
     ]
     },
     // dokter page
@@ -64,6 +65,8 @@ const router = createRouter({
       { path: 'status-resep', component: () => import('@/components/pages/pasien/StatusResep.vue') },
       { path: 'dokter-pasien', component: () => import('@/components/pages/pasien/JadwalDokter.vue') },
       { path: 'konsultasi', component: () => import('@/components/pages/pasien/KonsultasiOnline.vue') },
+      { path: 'resep-konsultasi', component: () => import('@/components/pages/pasien/resepKonsultasi.vue') },
+      // { path: 'dokter/:id/poli', component: () => import('@/components/pages/pasien/DokterId.vue') },
       // { path: 'test-kosul', component: () => import('@/components/pages/pasien/testKonsul.vue') },
     ]
     },
@@ -74,6 +77,7 @@ const router = createRouter({
     meta: { requiresAuth: true, role: 'apoteker' },
     children: [
       { path: 'dashboard', component: () => import('@/components/pages/apoteker/Dashboard.vue') },
+      { path: 'konsultasi-resep', component: () => import('@/components/pages/apoteker/KonsultasiResep.vue') },
       // { path: 'daftar-poli', component: () => import('@/components/pages/pasien/DaftarPoli.vue') },
       // { path: 'status-antrian', component: () => import('@/components/pages/pasien/StatusAntrian.vue') },
       // { path: 'antrian', component: () => import('@/components/pages/pasien/Antrian.vue') },

@@ -54,6 +54,7 @@ const menuItems = [
   { text: "Status Resep", to: "/pasien/status-resep", icon: FileText },
   { text: "Jadwal Dokter", to: "/pasien/dokter-pasien", icon: Users },
   { text: "Konsultasi", to: "/pasien/konsultasi", icon: MessageSquare },
+  // { text: "Resep Konsultasi", to: "/pasien/resep-konsultasi", icon: MessageSquare },
   // { text: "Uji Konsul", to: "/pasien/test-kosul", icon: MessageSquare },
 ];
 
@@ -112,7 +113,7 @@ const handleLogout = async () => {
 
 <style scoped>
 .router-link-active {
-  background-color: #d343414f;
+  background-color: #d3434158;
   color: #d34341;
   border-radius: 1rem;
   font-weight: 500;
@@ -123,7 +124,7 @@ const handleLogout = async () => {
   border-radius: 9999px;
 }
 .router-link-active:hover {
-  background-color: #d343416a;
+  background-color: #d3434190;
 }
 
 .slide-down-enter-active,

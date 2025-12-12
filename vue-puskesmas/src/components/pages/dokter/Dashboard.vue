@@ -1,5 +1,5 @@
 <template>
-    <div class="min-h-screen bg-white border p-4 flex md:px-6 w-full">
+    <div class="min-h-screen bg-white p-4 flex md:px-6 w-full">
         <div class="w-full mt-15">
             <div class="mb-12">
                 <div class="flex items-center gap-3 mb-3">
@@ -278,4 +278,3 @@ onMounted(() => {
 })
 </script>
 
-<style scoped></style>

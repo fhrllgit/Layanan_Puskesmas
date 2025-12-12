@@ -2,8 +2,8 @@
   <div class="flex min-h-screen bg-gray-50">
     <SidebarAdmin />
 
-    <div class="">
-      <main class="p-6 flex-1 overflow-y-auto">
+    <div class="w-full">
+      <main class="p-6 flex-1 max-h-screen w-full overflow-y-auto">
         <router-view /> 
       </main>
     </div>

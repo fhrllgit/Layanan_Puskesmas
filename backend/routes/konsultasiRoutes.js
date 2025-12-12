@@ -11,7 +11,10 @@ router.get("/aktif", verifyToken, allowRoles("dokter"), konsultasiController.daf
 router.post("/read/:id", verifyToken, konsultasiController.tandaiDibaca);
 router.get("/detail/:id", konsultasiController.getKonsultasiDetail);
 router.get("/total-hari-ini/:dokter_id", verifyToken, konsultasiController.getTotalKonsultasiHariIni);
-// router.get("/resep/:konsultasi_id", verifyToken, allowRoles("pasien", "dokter"), konsultasiController.getResep);
-// router.post("/resep", verifyToken, allowRoles("dokter"), konsultasiController.createResep);
-
+router.get("/dokter/status/:id", konsultasiController.getStatusDokter);
+// resep
+router.post("/kirim-resep", verifyToken, allowRoles("dokter"), konsultasiController.kirimResep);
+router.get("/:id", verifyToken, allowRoles("dokter", "pasien", "apoteker"), konsultasiController.getResepById);
+router.put("/tebus-puskesmas/:id", verifyToken, allowRoles("pasien"), konsultasiController.tebusPuskesmas);
+router.get("/tebus-luar/:id", verifyToken, allowRoles("pasien"), konsultasiController.tebusLuar);
 module.exports = router;
