@@ -30,7 +30,6 @@ const router = createRouter({
       { path: 'users/list', component: () => import('@/components/pages/admin/Users/UserList.vue')},
       { path: 'users/verify', component: () => import('@/components/pages/admin/Users/VerifyUser.vue') },
       { path: 'users/add', component: () => import('@/components/pages/admin/Users/UserForm.vue') },
-
       // data master klinik
       { path: 'poli', component: () => import('@/components/pages/admin/MasterKlinik/CrudPoli.vue') },
       { path: 'obat', component: () => import('@/components/pages/admin/MasterKlinik/DataObat.vue') },
@@ -104,6 +103,23 @@ const router = createRouter({
       component: DokterId
     }
     ],
+ scrollBehavior(to, from, savedPosition) {
+  if (savedPosition) {
+    return savedPosition;
+  }
+  if (to.path === "/" && !to.hash) {
+    return { top: 0 };
+  }
+  if (to.hash) {
+    return {
+      el: to.hash,
+      behavior: "smooth"
+    };
+  }
+
+  return { top: 0 };
+}
+
 })
 
 function getUserFromLocalStorage() {

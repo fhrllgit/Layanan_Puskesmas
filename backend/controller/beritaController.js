@@ -194,3 +194,79 @@ exports.getTipeBerita = (req, res) => {
     return res.json({ data: rows });
   });
 };
+
+exports.getBeritaByPoli = (req, res) => {
+  const limitPerPoli = req.query.limit ? parseInt(req.query.limit) : 2;
+  const poliId = req.query.poli_id; // ambil dari query
+
+  let sql = `
+    SELECT
+      p.id AS poli_id,
+      p.nama_poli,
+      p.prefix,
+      p.deskripsi,
+      b.id AS berita_id,
+      b.judul,
+      b.isi,
+      b.gambar,
+      b.tanggal,
+      b.tipe_id,
+      b.created_at AS berita_created_at,
+      b.updated_at AS berita_updated_at,
+      tb.nama_tipe AS tipe_nama
+    FROM poli p
+    LEFT JOIN berita_poli bp ON p.id = bp.poli_id
+    LEFT JOIN berita b ON bp.berita_id = b.id
+    LEFT JOIN tipe_berita tb ON b.tipe_id = tb.id
+  `;
+
+  // FILTER BERDASARKAN POLI
+  if (poliId && poliId !== "all") {
+    sql += ` WHERE p.id = ${db.escape(poliId)}`;
+  }
+
+  sql += ` ORDER BY b.tanggal DESC, b.created_at DESC`;
+
+  db.query(sql, (err, rows) => {
+    if (err) return res.status(500).json({ success: false, message: err.message });
+
+    // grouping per poli
+    const grouped = {};
+    rows.forEach(row => {
+      const pid = row.poli_id;
+      if (!grouped[pid]) {
+        grouped[pid] = {
+          id: pid,
+          nama_poli: row.nama_poli,
+          prefix: row.prefix,
+          deskripsi: row.deskripsi,
+          berita: []
+        };
+      }
+
+      if (row.berita_id) {
+        grouped[pid].berita.push({
+          id: row.berita_id,
+          judul: row.judul,
+          isi: row.isi,
+          gambar: row.gambar,
+          tanggal: row.tanggal,
+          tipe_id: row.tipe_id,
+          tipe_nama: row.tipe_nama,
+          created_at: row.berita_created_at,
+          updated_at: row.berita_updated_at,
+        });
+      }
+    });
+
+    // apply limit
+    const result = Object.values(grouped).map(p => ({
+      ...p,
+      berita: limitPerPoli ? p.berita.slice(0, limitPerPoli) : p.berita
+    }));
+
+    res.json({ success: true, limit: limitPerPoli, data: result });
+  });
+};
+
+

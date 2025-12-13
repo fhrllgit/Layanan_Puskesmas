@@ -7,7 +7,6 @@
                     stroke="currentColor" class="size-3">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                 </svg>
-                <!-- route ke bagian halaman edukasi mencakup semua edukasi dll -->
                 <button class="text-[#d34341] cursor-pointer">Education</button>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3"
                     stroke="currentColor" class="size-3">
@@ -31,7 +30,6 @@
                             </p>
                         </div>
                     </div>
-                    <!-- di buat kaya scrol atas bawah tentang artikel populer -->
                     <div class="flex-1 border">
                         <h1>pending</h1>
                     </div>
