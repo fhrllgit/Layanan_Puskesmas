@@ -173,7 +173,7 @@ exports.getDetailResep = (req, res) => {
   });
 };
 
-// pasien tebus resep dokter
+// pasien tebus resep dokterrrr
 exports.getStatusKonsultasi = (req, res) => {
   const pasien_id = req.user.id;
 

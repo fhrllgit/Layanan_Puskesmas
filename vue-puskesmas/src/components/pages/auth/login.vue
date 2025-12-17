@@ -107,7 +107,7 @@ const handleLogin = async () => {
       else if (user.role === "pasien") window.location.href = "/pasien/dashboard";
     });
 
-  } catch (err) {
+} catch (err) {
     Swal.fire({
       icon: "error",
       title: "Oops...",

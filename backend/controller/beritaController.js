@@ -197,7 +197,7 @@ exports.getTipeBerita = (req, res) => {
 
 exports.getBeritaByPoli = (req, res) => {
   const limitPerPoli = req.query.limit ? parseInt(req.query.limit) : 2;
-  const poliId = req.query.poli_id; // ambil dari query
+  const poliId = req.query.poli_id; 
 
   let sql = `
     SELECT
@@ -220,7 +220,6 @@ exports.getBeritaByPoli = (req, res) => {
     LEFT JOIN tipe_berita tb ON b.tipe_id = tb.id
   `;
 
-  // FILTER BERDASARKAN POLI
   if (poliId && poliId !== "all") {
     sql += ` WHERE p.id = ${db.escape(poliId)}`;
   }
@@ -230,7 +229,6 @@ exports.getBeritaByPoli = (req, res) => {
   db.query(sql, (err, rows) => {
     if (err) return res.status(500).json({ success: false, message: err.message });
 
-    // grouping per poli
     const grouped = {};
     rows.forEach(row => {
       const pid = row.poli_id;
@@ -259,7 +257,6 @@ exports.getBeritaByPoli = (req, res) => {
       }
     });
 
-    // apply limit
     const result = Object.values(grouped).map(p => ({
       ...p,
       berita: limitPerPoli ? p.berita.slice(0, limitPerPoli) : p.berita

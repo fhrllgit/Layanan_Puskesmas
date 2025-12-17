@@ -2,7 +2,7 @@
   <div>
     <div class="px-4 sm:px-6 md:px-20 min-h-screen h-full">
       <div class="flex flex-col lg:flex-row relative">
-        <div class="flex-1 flex flex-col h-auto lg:h-screen justify-center py-10 lg:py-0">
+        <div class="flex-1 relative flex flex-col h-auto lg:h-screen justify-center py-10 lg:py-0">
           <div class="flex flex-col mt-10 space-y-2.5">
             <h1 v-if="user" class="font-semibold text-lg sm:text-xl">Halo, {{ user.nama }} 👋</h1>
             <h1 class="text-4xl sm:text-5xl lg:text-6xl text-[#d34341]" style="font-weight: 800;">
@@ -102,211 +102,403 @@
       </div>
     </div>
 
-    <div class="relative h-full min-h-screen bg-white overflow-hidden ">
-      <div class="absolute top-0 left-0 right-0 w-full h-full">
-        <svg viewBox="0 0 1440 900" class="w-full h-full" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="waveGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#fff" stop-opacity="0.05" />
-              <stop offset="25%" stop-color="#fde3e3" stop-opacity="0.1" />
-              <stop offset="50%" stop-color="#fde3e3" stop-opacity="0.2" />
-              <stop offset="75%" stop-color="#fde3e3" stop-opacity="0.2" />
-              <stop offset="100%" stop-color="#d34341c4" stop-opacity="0.2" />
-            </linearGradient>
-          </defs>
-          <g transform="scale(1,-1) translate(0,-900)">
-            <path fill="url(#waveGradient)" class="hidden sm:block" d="
-            M0,800
-            Q390,950 720,830
-            T1540,900
-            L1440,0
-            L0,0
-            Z
-          " />
-            <path fill="url(#waveGradient)" class="block sm:hidden" d="
-            M0,800
-            Q390,860 720,830
-            T1540,850
-            L1440,0
-            L0,0
-            Z
-          " />
-          </g>
-        </svg>
+    <div class="relative h-full min-h-screen  overflow-hidden bg-gradient-to-br from-gray-50 via-white to-gray-50 overflow-hidden bg-gradient-to-b from-white via-gray-100/30 to-white">
+      <div class="absolute inset-0 pointer-events-none
+            bg-[linear-gradient(to_right,rgba(128,128,128,0.03)_1px,transparent_1px),
+            linear-gradient(to_bottom,rgba(128,128,128,0.03)_1px,transparent_1px)]
+            bg-[size:4rem_4rem]
+            [mask-image:linear-gradient(to_bottom,transparent_2%,black_70%,transparent_98%)]">
+        <div class="grid-bg"></div>
+        <div class="absolute top-20 left-10 w-72 h-72 bg-red-100/30 rounded-full blur-3xl animate-float"></div>
+        <div class="absolute top-1/3 right-20 w-96 h-96 bg-red-50/40 rounded-full blur-3xl animate-float"
+          style="animation-delay: 2s;"></div>
+        <div class="absolute bottom-20 left-1/3 w-80 h-80 bg-red-100/20 rounded-full blur-3xl animate-float"
+          style="animation-delay: 4s;"></div>
+        <div class="absolute top-32 right-16 w-20 h-20 border-2 border-red-200/30 rounded-2xl rotate-12 animate-float">
+        </div>
+        <div class="absolute top-1/2 left-24 w-16 h-16 border-2 border-red-200/30 rounded-2xl -rotate-6 animate-float"
+          style="animation-delay: 1s;"></div>
+        <div
+          class="absolute bottom-32 right-1/4 w-24 h-24 border-2 border-red-200/30 rounded-2xl rotate-45 animate-float"
+          style="animation-delay: 3s;"></div>
       </div>
 
-      <div class="relative z-10 px-4 sm:px-6 md:px-20 mt- py-12  ">
-        <div class="flex flex-col lg:flex-row gap-8 mb-8">
-          <div class="lg:w-1/3">
-            <h1 class="lg:text-2xl text-gray-900 mb-3 leading-tight" style="font-weight: 700;">
-              Mulai Akses Layanan Kesehatan <br> di <span class="text-[#d34341]">SISMA</span>
+      <div class="relative mt-5 z-10 px-4 sm:px-6 md:px-20 py-12">
+        <div class="flex flex-col lg:flex-row gap-8 mb-16">
+          <div class="lg:w-2/5 flex flex-col justify-center">
+            <div
+              class="inline-flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-full text-sm font-medium mb-6 w-fit">
+              <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+              Platform Kesehatan Digital
+            </div>
+            <h1 class="text-4xl lg:text-5xl text-gray-900 mb-6 leading-tight" style="font-weight: 700;">
+              Mulai Akses Layanan Kesehatan di
+              <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#d34341] to-[#e67876]">SISMA</span>
             </h1>
-            <p class="text-base text-gray-600 leading-relaxed">Pilih layanan yang Anda butuhkan untuk memulai <br>
-              kesehatan.</p>
+            <p class="text-md text-[#6c6a6a] leading-relaxed mb-8">
+              Pilih layanan yang Anda butuhkan untuk memulai perjalanan kesehatan Anda dengan mudah dan cepat.
+            </p>
+            <div class="flex flex-wrap gap-4">
+              <div class="flex items-center gap-3 bg-white px-5 py-3 rounded-xl shadow-sm border border-gray-100">
+                <div class="w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                    stroke="currentColor" class="w-5 h-5 text-[#d34341]">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-xs text-gray-500">Waktu Tunggu</p>
+                  <p class="text-sm font-semibold text-gray-900">12-15 menit</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 bg-white px-5 py-3 rounded-xl shadow-sm border border-gray-100">
+                <div class="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                    stroke="currentColor" class="w-5 h-5 text-green-600">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-xs text-gray-500">Status</p>
+                  <p class="text-sm font-semibold text-gray-900">Buka Hari Ini</p>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="flex-1">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="lg:w-3/5">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               <div @click="goTo(item)" v-for="(item, index) in ctasection" :key="item.id"
-                class="bg-[#d34341] cursor-pointer rounded-lg shadow-md overflow-hidden border border-[#d34341] hover:shadow-lg transition-shadow">
-                <div class="pb-1 flex bg-[#d34341]">
-                  <div class="flex bg-white w-full rounded-b-lg items-center p-5">
+                class="group bg-white cursor-pointer rounded-xl shadow-sm hover:shadow-lg border border-gray-100 hover:border-red-200 transition-all duration-300 overflow-hidden hover:-translate-y-1">
+                <div class="p-4">
+                  <div class="flex items-start justify-between mb-3">
                     <div
-                      class="w-12 h-12 bg-[#f9ebeb] rounded-full flex items-center justify-center mr-4 flex-shrink-0">
-                      <component :is="item.icon" class="w-6 h-6 text-[#d34341]" />
+                      class="w-11 h-11 bg-gradient-to-br from-red-50 to-red-100 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <component :is="item.icon" class="w-5 h-5 text-[#d34341]" />
                     </div>
-                    <div class="flex-1 min-w-0">
-                      <h3 class="font-semibold text-gray-800 mb-1 line-clamp-1">{{ item.nama }}</h3>
-                      <p class="text-sm text-gray-600 line-clamp-1">{{ item.ktr }}</p>
+                    <div
+                      class="w-7 h-7 bg-red-50 rounded-full flex items-center justify-center group-hover:bg-[#d34341] transition-colors">
+                      <component :is="ChevronRightIcon" class="w-3.5 h-3.5 text-[#d34341] group-hover:text-white"
+                        stroke-width="3" />
                     </div>
-                    <component :is="ChevronRightIcon" class="w-4 h-4 text-[#d34341]" stroke-width="3" />
                   </div>
+                  <h3 class="font-semibold text-gray-900 mb-1.5 text-sm line-clamp-1">{{ item.nama }}</h3>
+                  <p class="text-xs text-gray-500 line-clamp-2">{{ item.ktr }}</p>
+                </div>
+                <div
+                  class="h-0.5 bg-gradient-to-r from-[#d34341] to-[#e67876] transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left">
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div class="mt-20">
-          <div class="flex items-center gap-3 mb-6">
-            <div class="w-1 h-8 bg-gradient-to-b from-[#d34341] to-[#e67876] rounded-full"></div>
-            <h2 class="text-2xl lg:text-3xl text-gray-900" style="font-weight: 700;">
+          <div class="flex items-center gap-4 mb-8">
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 bg-[#d34341] rounded-full animate-pulse"></div>
+              <div class="w-2 h-2 bg-[#d34341] rounded-full animate-pulse" style="animation-delay: 0.2s;"></div>
+              <div class="w-2 h-2 bg-[#d34341] rounded-full animate-pulse" style="animation-delay: 0.4s;"></div>
+            </div>
+            <h2 class="text-3xl lg:text-4xl text-gray-900 font-bold">
               Informasi Hari Ini
             </h2>
           </div>
-
-          <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 lg:p-10 backdrop-blur-sm">
-            <ul class="space-y-5 text-gray-700">
-              <li
-                class="flex flex-col sm:flex-row sm:items-start group hover:bg-gray-50 -mx-4 px-4 py-3 rounded-xl transition-colors">
-                <span class="font-semibold text-gray-800 sm:w-48 mb-1 sm:mb-0 flex items-center gap-2">
-                  <span class="w-2 h-2 bg-[#d34341] rounded-full"></span>
-                  Jam Operasional
-                </span>
-                <span class="sm:ml-4 text-gray-600">08:00 – 17:00 | <span class="text-red-700">Minggu - Tanggal merah
-                    libur</span></span>
-              </li>
-
-              <li
-                class="flex flex-col sm:flex-row sm:items-start group hover:bg-gray-50 -mx-4 px-4 py-3 rounded-xl transition-colors">
-                <span class="font-semibold text-gray-800 sm:w-48 mb-1 sm:mb-0 flex items-center gap-2">
-                  <span class="w-2 h-2 bg-[#d34341] rounded-full"></span>
-                  Poli Buka
-                </span>
-                <div>
-                  <span v-if="loading" class="text-gray-600">Memuat jadwal...</span>
-                  <span v-else-if="error" class="text-red-600">{{ err }}</span>
-                  <div v-else-if="jadwalDokter.length === 0" class="text-gray-500 sm:ml-4">
-                    Tidak ada poli untuk hari ini / libur.
+          <div
+            class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 lg:p-8 backdrop-blur-sm hover:shadow-2xl transition-shadow">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div class="group">
+                <div
+                  class="flex items-start gap-3 p-4 rounded-xl bg-gradient-to-br from-gray-50 to-white border border-gray-100 hover:border-red-200 transition-all">
+                  <div
+                    class="w-10 h-10 bg-gradient-to-br from-red-50 to-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                      stroke="currentColor" class="w-5 h-5 text-[#d34341]">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
                   </div>
-                  <div v-else v-for="item in jadwalDokter" class="flex">
-                    <span class="sm:ml-4 text-gray-600">{{ item.nama_poli }}</span>
+                  <div class="flex-1">
+                    <h3 class="font-semibold text-gray-900 mb-1 text-sm">Jam Operasional</h3>
+                    <p class="text-gray-600 text-sm mb-1">08:00 - 17:00</p>
+                    <p class="text-xs text-red-600 font-medium">⚠️ Minggu & Tanggal Merah Libur</p>
                   </div>
                 </div>
-              </li>
+              </div>
 
-              <li
-                class="flex flex-col sm:flex-row sm:items-start group hover:bg-gray-50 -mx-4 px-4 py-3 rounded-xl transition-colors">
-                <span class="font-semibold text-gray-800 sm:w-48 mb-1 sm:mb-0 flex items-center gap-2">
-                  <span class="w-2 h-2 bg-[#d34341] rounded-full"></span>
-                  Dokter Hari Ini
-                </span>
-                <div>
-                  <span v-if="loading" class="text-gray-600">Memuat jadwal...</span>
-                  <span v-else-if="error" class="text-red-600">{{ err }}</span>
-                  <div v-else-if="jadwalDokter.length === 0" class="text-gray-500 sm:ml-4">
-                    Tidak ada jadwal untuk hari ini / libur.
+              <div class="group">
+                <div
+                  class="flex items-start gap-3 p-4 rounded-xl bg-gradient-to-br from-gray-50 to-white border border-gray-100 hover:border-red-200 transition-all">
+                  <div
+                    class="w-10 h-10 bg-gradient-to-br from-green-50 to-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                      stroke="currentColor" class="w-5 h-5 text-green-600">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" />
+                    </svg>
                   </div>
-                  <div v-else v-for="item in jadwalDokter" class="flex">
-                    <span class="sm:ml-4 text-gray-600">Dr. {{ item.nama_dokter }}</span>
+                  <div class="flex-1">
+                    <h3 class="font-semibold text-gray-900 mb-2 text-sm">Poli Buka</h3>
+                    <span v-if="loading" class="text-gray-500 text-xs">Memuat jadwal...</span>
+                    <span v-else-if="error" class="text-red-600 text-xs">{{ err }}</span>
+                    <div v-else-if="jadwalDokter.length === 0" class="text-gray-500 text-xs">
+                      Tidak ada poli untuk hari ini / libur.
+                    </div>
+                    <div v-else class="space-y-1.5">
+                      <div v-for="item in jadwalDokter" :key="item.id" class="flex items-center gap-2">
+                        <span class="w-1 h-1 bg-green-500 rounded-full"></span>
+                        <span class="text-gray-700 text-xs font-medium">{{ item.nama_poli }}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </li>
-              <li
-                class="flex flex-col sm:flex-row sm:items-start group hover:bg-gray-50 -mx-4 px-4 py-3 rounded-xl transition-colors">
-                <span class="font-semibold text-gray-800 sm:w-48 mb-1 sm:mb-0 flex items-center gap-2">
-                  <span class="w-2 h-2 bg-[#d34341] rounded-full"></span>
-                  Estimasi Antrian
-                </span>
-                <span class="sm:ml-4 text-gray-600">12 – 15 menit</span>
-              </li>
+              </div>
 
-              <li
-                class="flex flex-col sm:flex-row sm:items-start group hover:bg-gray-50 -mx-4 px-4 py-3 rounded-xl transition-colors">
-                <span class="font-semibold text-gray-800 sm:w-48 mb-1 sm:mb-0 flex items-center gap-2">
-                  <span class="w-2 h-2 bg-[#d34341] rounded-full"></span>
-                  Pengumuman
-                </span>
-                <span class="sm:ml-4 text-gray-600">Hari ini tidak ada layanan vaksinasi.</span>
-              </li>
-            </ul>
+              <div class="group">
+                <div
+                  class="flex items-start gap-3 p-4 rounded-xl bg-gradient-to-br from-gray-50 to-white border border-gray-100 hover:border-red-200 transition-all">
+                  <div
+                    class="w-10 h-10 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                      stroke="currentColor" class="w-5 h-5 text-blue-600">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    </svg>
+                  </div>
+                  <div class="flex-1">
+                    <h3 class="font-semibold text-gray-900 mb-2 text-sm">Dokter Hari Ini</h3>
+                    <span v-if="loading" class="text-gray-500 text-xs">Memuat jadwal...</span>
+                    <span v-else-if="error" class="text-red-600 text-xs">{{ err }}</span>
+                    <div v-else-if="jadwalDokter.length === 0" class="text-gray-500 text-xs">
+                      Tidak ada jadwal untuk hari ini / libur.
+                    </div>
+                    <div v-else class="space-y-1.5">
+                      <div v-for="item in jadwalDokter" :key="item.id" class="flex items-center gap-2">
+                        <span class="w-1 h-1 bg-blue-500 rounded-full"></span>
+                        <span class="text-gray-700 text-xs font-medium">Dr. {{ item.nama_dokter }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="group">
+                <div
+                  class="flex items-start gap-3 p-4 rounded-xl bg-gradient-to-br from-gray-50 to-white border border-gray-100 hover:border-red-200 transition-all">
+                  <div
+                    class="w-10 h-10 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                      stroke="currentColor" class="w-5 h-5 text-purple-600">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                    </svg>
+                  </div>
+                  <div class="flex-1">
+                    <h3 class="font-semibold text-gray-900 mb-1 text-sm">Estimasi Antrian</h3>
+                    <p class="text-gray-600 text-lg font-bold">12 – 15 <span
+                        class="text-xs font-normal text-gray-500">menit</span></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-6 p-4 bg-gradient-to-r from-amber-50 to-orange-50 border-l-4 border-amber-400 rounded-xl">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                    stroke="currentColor" class="w-4 h-4 text-amber-600">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 01-1.44-4.282m3.102.069a18.03 18.03 0 01-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 018.835 2.535M10.34 6.66a23.847 23.847 0 008.835-2.535m0 0A23.74 23.74 0 0018.795 3m.38 1.125a23.91 23.91 0 011.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 001.014-5.395m0-3.46c.495.413.811 1.035.811 1.73 0 .695-.316 1.317-.811 1.73m0-3.46a24.347 24.347 0 010 3.46" />
+                  </svg>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-900 mb-0.5 text-sm">Pengumuman</h4>
+                  <p class="text-gray-600 text-xs">Hari ini tidak ada layanan vaksinasi.</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="mt-15 mb-20 py-16 px-6">
-      <div class="max-w-7xl mx-auto">
-        <div class="grid md:grid-cols-2 gap-12 items-center">
-          <div class="space-y-6">
-            <div class="inline-block">
-              <p class="text-red-500 text-sm font-semibold mb-1">Sismahealth</p>
-              <h1 class="text-red-500 text-2xl font-bold">Board of Medical<br>Excellence</h1>
+    <div class="mt-15 mb-20 py-16 px-6 relative overflow-hidden">
+      <div class="absolute inset-0 pointer-events-none">
+        <div class="absolute top-20 right-10 w-72 h-72 bg-red-100/20 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-20 left-10 w-96 h-96 bg-purple-100/20 rounded-full blur-3xl"></div>
+        <div class="absolute top-1/2 left-1/4 w-64 h-64 bg-yellow-100/20 rounded-full blur-3xl"></div>
+        <div class="absolute top-1/3 right-20 w-96 h-96 bg-red-50/40 rounded-full blur-3xl animate-float"
+          style="animation-delay: 2s;"></div>
+        <div class="absolute bottom-20 left-1/3 w-80 h-80 bg-red-100/20 rounded-full blur-3xl animate-float"
+          style="animation-delay: 4s;"></div>
+        <div class="absolute top-32 right-16 w-20 h-20 border-2 border-red-200/30 rounded-2xl rotate-12 animate-float">
+        </div>
+        <div class="absolute top-1/2 left-24 w-16 h-16 border-2 border-red-200/30 rounded-2xl -rotate-6 animate-float"
+          style="animation-delay: 1s;"></div>
+        <div
+          class="absolute bottom-32 right-1/4 w-24 h-24 border-2 border-red-200/30 rounded-2xl rotate-45 animate-float"
+          style="animation-delay: 3s;"></div>
+      </div>
+      <div class="max-w-7xl mx-auto relative z-10">
+        <div class="text-center mb-16">
+          <div
+            class="inline-flex items-center gap-2 bg-gradient-to-r from-red-50 to-purple-50 px-5 py-2.5 rounded-full mb-4">
+            <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+            <span class="text-red-600 text-sm font-semibold">Sismahealth Excellence</span>
+          </div>
+          <h1 class="text-4xl md:text-5xl font-bold mb-4">
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-purple-600">
+              Board of Medical
+            </span>
+            <br>
+            <span class="text-gray-900">Excellence</span>
+          </h1>
+          <p class="text-gray-600 text-lg max-w-3xl mx-auto leading-relaxed">
+            Seluruh prosedur medis dan tenaga kesehatan di Sisma dipastikan memenuhi standar regulasi dan etika layanan
+            kesehatan tertinggi.
+          </p>
+        </div>
+        <div class="flex flex-wrap justify-center items-end gap-6 lg:gap-8">
+          <div class="group relative">
+            <div
+              class="relative overflow-hidden rounded-2xl bg-white shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
+              <div
+                class="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-red-500/10 opacity-0 group-hover:opacity-100 transition-opacity">
+              </div>
+              <div class="relative">
+                <div class="w-56 h-72 overflow-hidden">
+                  <img src="../../../assets/img/iamgepasien.jpeg"
+                    alt="Dr. Novi"
+                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                </div>
+                <div class="absolute bottom-0 left-0 right-0 p-5 text-white">
+                  <div class="bg-white/20 backdrop-blur-md rounded-xl p-3 border border-white/30">
+                    <p class="font-bold text-base mb-1">Dr. Novi</p>
+                    <div class="flex items-center gap-2">
+                      <span class="px-3 py-1 bg-yellow-400 text-purple-900 rounded-full text-xs font-semibold">
+                        Medical Advisor
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-
-            <div>
-              <h2 class="text-gray-800 text-3xl md:text-4xl font-bold mb-4">
-                Diawasi oleh Board of Medical Excellence
-              </h2>
-              <p class="text-gray-600 text-lg leading-relaxed">
-                Seluruh prosedur medis dan tenaga kesehatan di Sisma dipastikan memenuhi standar regulasi dan etika
-                layanan kesehatan tertinggi.
-              </p>
+            <div
+              class="absolute -top-3 -right-3 w-12 h-12 bg-purple-500 rounded-full blur-xl opacity-50 group-hover:opacity-75 transition-opacity">
             </div>
           </div>
-
-          <div class="relative flex justify-center items-end gap-4">
-            <div class="absolute inset-0 flex items-center justify-center">
-              <div class="w-96 h-96 bg-[#d34341] opacity-40 rounded-full blur-3xl"></div>
-            </div>
-            <div class="relative z-10 transform hover:scale-105 transition-transform duration-300">
-              <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=500&fit=crop" alt="Dr. Novi"
-                class="w-48 h-64 object-cover rounded-lg shadow-xl" />
-              <div class="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-max">
-                <div class="bg-purple-600 text-white px-4 py-2 rounded-full shadow-lg">
-                  <p class="font-bold text-sm">Dr. Novi</p>
-                </div>
+          <div class="group relative">
+            <div
+              class="relative overflow-hidden rounded-2xl bg-white shadow-2xl hover:shadow-3xl transition-all duration-500 hover:-translate-y-3">
+              <!-- <div
+                class="absolute inset-0 bg-gradient-to-br from-red-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity">
+              </div> -->
+              <!-- <div class="absolute top-4 right-4 z-20">
                 <div
-                  class="bg-yellow-400 text-purple-900 px-3 py-1 rounded-full text-xs font-semibold mt-1 text-center">
-                  Medical Advisor
+                  class="bg-gradient-to-r from-red-500 to-purple-600 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
+                  ⭐ Chief Medical Officer
+                </div>
+              </div> -->
+              <div class="relative">
+                <div class="w-64 h-80 overflow-hidden">
+                  <img src="../../../assets/img/iamgepasien.jpeg"
+                    alt="Dr. Stevanus Firiri"
+                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                </div>
+                <div class="absolute bottom-0 left-0 right-0 p-5 text-white">
+                  <div class="bg-white/20 backdrop-blur-md rounded-xl p-4 border border-white/30">
+                    <p class="font-bold text-lg mb-2">Dr. Stevanus Firiri</p>
+                    <div class="flex items-center gap-2 mb-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                        stroke="currentColor" class="w-4 h-4 text-yellow-400">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
+                      </svg>
+                      <span class="text-yellow-400 text-xs font-semibold">Verified Medical Professional</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="relative z-20 transform hover:scale-105 transition-transform duration-300">
-              <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&h=550&fit=crop"
-                alt="Dr. Irwan Heriyanto" class="w-52 h-72 object-cover rounded-lg shadow-2xl" />
-              <div class="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-max">
-                <div class="bg-purple-600 text-white px-4 py-2 rounded-full shadow-lg">
-                  <p class="font-bold text-sm">Dr. Stevanus Firiri</p>
+            <div
+              class="absolute -top-4 -right-4 w-16 h-16 bg-red-500 rounded-full blur-xl opacity-50 group-hover:opacity-75 transition-opacity">
+            </div>
+            <div
+              class="absolute -bottom-4 -left-4 w-16 h-16 bg-purple-500 rounded-full blur-xl opacity-50 group-hover:opacity-75 transition-opacity">
+            </div>
+          </div>
+          <div class="group relative">
+            <div
+              class="relative overflow-hidden rounded-2xl bg-white shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
+              <div
+                class="absolute inset-0 bg-gradient-to-br from-red-500/10 to-yellow-500/10 opacity-0 group-hover:opacity-100 transition-opacity">
+              </div>
+              <div class="relative">
+                <div class="w-56 h-72 overflow-hidden">
+                  <img src="../../../assets/img/iamgepasien.jpeg"
+                    alt="Anang Setiawan"
+                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                 </div>
-                <div
-                  class="bg-yellow-400 text-purple-900 px-3 py-1 rounded-full text-xs font-semibold mt-1 text-center">
-                  Chief Medical Officer
+                <div class="absolute bottom-0 left-0 right-0 p-5 text-white">
+                  <div class="bg-white/20 backdrop-blur-md rounded-xl p-3 border border-white/30">
+                    <p class="font-bold text-base mb-1">Anang Setiawan</p>
+                    <div class="flex items-center gap-2">
+                      <span
+                        class="px-3 py-1 bg-yellow-400 text-purple-900 rounded-full text-xs font-semibold whitespace-nowrap">
+                        Patient Care & Support
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-
-            <div class="relative z-10 transform hover:scale-105 transition-transform duration-300">
-              <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&h=500&fit=crop"
-                alt="Wawan Setiawan" class="w-48 h-64 object-cover rounded-lg shadow-xl" />
-              <div class="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-max">
-                <div class="bg-purple-600 text-white px-4 py-2 rounded-full shadow-lg">
-                  <p class="font-bold text-sm">Anang Setiawan</p>
-                </div>
-                <div
-                  class="bg-yellow-400 text-purple-900 px-3 py-1 rounded-full text-xs font-semibold mt-1 text-center whitespace-nowrap">
-                  Chief of Patient Care & Support
-                </div>
-              </div>
+            <div
+              class="absolute -top-3 -left-3 w-12 h-12 bg-yellow-500 rounded-full blur-xl opacity-50 group-hover:opacity-75 transition-opacity">
             </div>
+          </div>
+        </div>
+        <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          <div
+            class="text-center p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div
+              class="w-12 h-12 bg-gradient-to-br from-red-50 to-red-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                stroke="currentColor" class="w-6 h-6 text-red-500">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+              </svg>
+            </div>
+            <p class="font-bold text-gray-900 text-2xl mb-1">100+</p>
+            <p class="text-gray-600 text-sm">Dokter Bersertifikasi</p>
+          </div>
+          <div
+            class="text-center p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div
+              class="w-12 h-12 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                stroke="currentColor" class="w-6 h-6 text-purple-500">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+              </svg>
+            </div>
+            <p class="font-bold text-gray-900 text-2xl mb-1">15+</p>
+            <p class="text-gray-600 text-sm">Pengalaman Tahunan</p>
+          </div>
+          <div
+            class="text-center p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div
+              class="w-12 h-12 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                stroke="currentColor" class="w-6 h-6 text-yellow-500">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M15.182 15.182a4.5 4.5 0 01-6.364 0M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75zm-.375 0h.008v.015h-.008V9.75zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-.375 0h.008v.015h-.008V9.75z" />
+              </svg>
+            </div>
+            <p class="font-bold text-gray-900 text-2xl mb-1">50K+</p>
+            <p class="text-gray-600 text-sm">Pasien Suka</p>
           </div>
         </div>
       </div>
@@ -373,29 +565,114 @@
       </div>
     </div>
 
-    <div class="h-full sm:px-6 md:px-20">
-      <h1 class="text-2xl font-semibold">Education</h1>
-      <div v-if="education.length === 0" class="text-gray-500 text-center py-10">Belum ada berita.</div>
-      <div v-else class="flex flex-wrap w-full gap-6 mt-10">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          <div @click="toDetail(b.id)" v-for="b in education" :key="b.id"
-            class="bg-white cursor-pointer flex-1/5 border border-[#bebcbca1] rounded-md shadow-md overflow-hidden flex flex-col hover:shadow-xl transition-shadow duration-300">
-            <div class="w-full h-44 overflow-hidden bg-gray-200">
-              <img class="w-full h-full object-cover" :src="`http://localhost:3003/uploads/tmp/${b.gambar}`"
-                :alt="b.gambar">
-            </div>
-            <div class="p-4 flex flex-col flex-grow">
-              <h2 style="font-weight: 600;" class="text-gray-800 text-md mb-2 line-clamp-2">{{ b.judul }}</h2>
-              <div class="flex gap-5 items-center">
-                <p style="font-size: 11px;" class="text-xs p-0.5 rounded-2xl px-5  bg-blue-100/60 text-[#646363] mb-2">{{ b.nama_tipe }}</p>
-                <p class="text-xs text-[#787878] cursor-text font-medium mb-2">{{ formatDate(b.created_at) }}</p>
-              </div>
-              <p style="font-size: 12px;" class="tracking-tight leading-[15px] text-[#5e5d5d] mb-4 line-clamp-3 flex-grow">{{ b.isi }}</p>
-            </div>
-          </div>
+
+<div class="min-h-screen bg-white py-12 px-4 sm:px-6 md:px-20 relative overflow-hidden">
+  <div class="absolute inset-0 pointer-events-none">
+    <div class="absolute top-20 right-10 w-64 h-64 bg-red-100/20 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-40 left-10 w-80 h-80 bg-red-100/15 rounded-full blur-3xl"></div>
+    <div class="absolute top-32 left-1/4 w-16 h-16 border-2 border-red-200/30 rounded-2xl rotate-12 animate-float"></div>
+    <div class="absolute bottom-32 right-1/3 w-20 h-20 border-2 border-red-200/30 rounded-2xl -rotate-6 animate-float" style="animation-delay: 2s;"></div>
+  </div>
+
+  <div class="relative z-10 max-w-7xl mx-auto">
+    <div class="mb-12">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="flex items-center gap-2">
+          <div class="w-2 h-2 bg-[#d34341] rounded-full animate-pulse"></div>
+          <div class="w-2 h-2 bg-[#d34341] rounded-full animate-pulse" style="animation-delay: 0.2s;"></div>
+          <div class="w-2 h-2 bg-[#d34341] rounded-full animate-pulse" style="animation-delay: 0.4s;"></div>
+        </div>
+        <div class="inline-flex items-center gap-2 bg-red-50 text-[#d34341] px-4 py-2 rounded-full text-sm font-semibold">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+          </svg>
+          Health Education
         </div>
       </div>
+      <h1 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+        Education & <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#d34341] to-[#e67876]">Articles</span>
+      </h1>
+      <p class="text-[#696969] text-lg max-w-2xl">
+        Temukan berbagai artikel edukatif dan informasi kesehatan terkini untuk meningkatkan pengetahuan Anda.
+      </p>
     </div>
+
+    <div v-if="education.length === 0" class="py-20">
+      <div class="flex flex-col items-center justify-center">
+        <div class="relative mb-6">
+          <div class="absolute inset-0 bg-red-100 rounded-full blur-2xl opacity-50 animate-pulse"></div>
+          <div class="relative w-24 h-24 bg-gradient-to-br from-red-50 to-red-100 rounded-full flex items-center justify-center border-4 border-red-200/50 shadow-xl">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-[#d34341]">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+            </svg>
+          </div>
+        </div>
+        <h3 class="text-gray-700 font-semibold text-lg mb-2">Belum Ada Artikel</h3>
+        <p class="text-gray-400 text-sm text-center max-w-md px-4">
+          Saat ini belum ada artikel tersedia. Silakan cek kembali nanti untuk konten edukatif terbaru.
+        </p>
+      </div>
+    </div>
+
+    <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <article 
+        @click="toDetail(item.id)" 
+        v-for="item in education" 
+        :key="item.id"
+        class="group bg-white cursor-pointer rounded-2xl shadow-sm hover:shadow-2xl border border-gray-100 hover:border-red-200 overflow-hidden transition-all duration-500 hover:-translate-y-2 flex flex-col">
+        <div class="relative w-full h-48 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
+          <img 
+            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+            :src="`http://localhost:3003/uploads/tmp/${item.gambar}`"
+            :alt="item.judul"
+            loading="lazy"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div class="absolute top-3 left-3">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/95 backdrop-blur-sm rounded-full text-xs font-semibold text-gray-700 shadow-md">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3 h-3 text-[#d34341]">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z" />
+              </svg>
+              {{ item.nama_tipe }}
+            </span>
+          </div>
+        </div>
+        <div class="p-5 flex flex-col flex-grow">
+          <h2 class="text-gray-900 font-bold text-base mb-3 line-clamp-2 group-hover:text-[#d34341] transition-colors leading-tight">
+            {{ item.judul }}
+          </h2>
+          <div class="flex items-center gap-3 mb-3">
+            <div class="flex items-center gap-1.5 text-xs text-gray-500">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+              </svg>
+              {{ formatDate(item.created_at) }}
+            </div>
+            <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
+            <div class="flex items-center gap-1.5 text-xs text-gray-500">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              5 min read
+            </div>
+          </div>
+          <p class="text-sm text-gray-600 mb-4 line-clamp-3 leading-relaxed flex-grow">
+            {{ item.isi }}
+          </p>
+          <div class="flex items-center gap-2 text-[#d34341] font-semibold text-sm group-hover:gap-3 transition-all">
+            <span>Read More</span>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 group-hover:translate-x-1 transition-transform">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </div>
+        </div>
+        <div class="h-1 bg-gradient-to-r from-[#d34341] to-[#e67876] transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500"></div>
+      </article>
+    </div>
+  </div>
+</div>
+
   </div>
 </template>
 
@@ -527,21 +804,20 @@ const formatDate = (date) => {
 
 </script>
 
-<style>
-::-webkit-scrollbar {
-    width: 6px;
+<style scoped>
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-20px) rotate(5deg);
+  }
 }
 
-::-webkit-scrollbar-track {
-    background: #111b21;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #374045;
-    border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #4a5358;
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }
 </style>

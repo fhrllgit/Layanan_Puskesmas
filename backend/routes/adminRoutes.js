@@ -17,5 +17,7 @@ router.get("/poli", verifyToken, allowRoles("admin"), adminController.getAllPoli
 router.get("/dokter", verifyToken, allowRoles("admin"), adminController.getAllDokter);
 router.get("/laporan/export-pdf", verifyToken, allowRoles("admin"), adminController.exportPDF);
 router.get("/laporan/export-excel", verifyToken, allowRoles("admin"), adminController.exportExcel);
+router.get("/jadwal-dokter", verifyToken, allowRoles("admin"), adminController.getJadwalDokter);
+router.get("/dashboard-antrian", verifyToken, allowRoles("admin"), adminController.getAntrian);
 
 module.exports = router;

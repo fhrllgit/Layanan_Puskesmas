@@ -1,6 +1,6 @@
 <template>
     <div class="w-full">
-        <div class="max-w-7xl mx-auto">
+        <div class="w-[67rem] mx-auto">
             <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
                 <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-2">
                     <span class="bg-gradient-to-r from-[#d34341] to-[#b83735] bg-clip-text text-transparent">
@@ -10,7 +10,7 @@
                 <p class="text-gray-600">Kelola resep dari konsultasi pasien</p>
             </div>
             <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-                <div class="hidden lg:block overflow-x-auto">
+                <div class="hidden scrollbar-hide lg:block overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gradient-to-r from-[#d34341] to-[#b83735]">
                             <tr>
@@ -67,7 +67,7 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                    {{ resep.tanggal }}
+                                    {{ formatDate(resep.tanggal) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <div class="flex gap-2">
@@ -160,7 +160,7 @@
                                         d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
                                 <span class="font-medium">Tanggal:</span>
-                                <span class="ml-1">{{ resep.tanggal }}</span>
+                                <span class="ml-1">{{ formatDate(resep.tanggal) }}</span>
                             </div>
                         </div>
 
@@ -346,6 +346,12 @@ const getResep = async () => {
     } catch (err) {
         console.error(err);
     }
+};
+
+const formatDate = (dateStr) => {
+  if (!dateStr || dateStr === "-") return "-";
+  const date = new Date(dateStr);
+  return date.toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" });
 };
 
 const lihatDetail = async (id) => {

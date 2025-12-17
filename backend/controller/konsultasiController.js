@@ -335,29 +335,51 @@ exports.getResepById = (req, res) => {
   });
 };
 
+// exports.tebusPuskesmas = (req, res) => {
+//   const { id } = req.params; 
+//   const pasien_id = req.user.id;
+
+//   const sql = `
+//     UPDATE resep_konsultasi 
+//     SET status = 'menunggu', apoteker_id = NULL 
+//     WHERE id = ? AND pasien_id = ?
+//   `;
+
+//   db.query(sql, [id, pasien_id], (err, result) => {
+//     if (err) return res.status(500).json({ msg: err.message });
+
+//     const sqlChat = `
+//       INSERT INTO konsultasi_chat (konsultasi_id, sender_id, message, type)
+//       VALUES ((SELECT konsultasi_id FROM resep_konsultasi WHERE id=?), ?, '[RESEP] Pasien ingin menebus resep di Apotek Puskesmas', 'resep')
+//     `;
+
+//     db.query(sqlChat, [id, pasien_id]);
+
+//     res.json({
+//       msg: "Resep dikirim ke Apotek Puskesmas (online)",
+//       status: "menunggu",
+//     });
+//   });
+// };
+
 exports.tebusPuskesmas = (req, res) => {
-  const { id } = req.params; // resep_id
+  const { id } = req.params;
   const pasien_id = req.user.id;
 
   const sql = `
-    UPDATE resep_konsultasi 
-    SET status = 'menunggu', apoteker_id = NULL 
+    UPDATE resep_konsultasi
+    SET status = 'menunggu', apoteker_id = NULL
     WHERE id = ? AND pasien_id = ?
   `;
 
   db.query(sql, [id, pasien_id], (err, result) => {
     if (err) return res.status(500).json({ msg: err.message });
 
-    // chat notifikasi
-    const sqlChat = `
-      INSERT INTO konsultasi_chat (konsultasi_id, sender_id, message, type)
-      VALUES ((SELECT konsultasi_id FROM resep_konsultasi WHERE id=?), ?, '[RESEP] Pasien ingin menebus resep di Apotek Puskesmas', 'resep')
-    `;
-
-    db.query(sqlChat, [id, pasien_id]);
-
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ msg: "Resep tidak ditemukan" });
+    }
     res.json({
-      msg: "Resep dikirim ke Apotek Puskesmas (online)",
+      msg: "Resep berhasil dikirim ke Apotek Puskesmas",
       status: "menunggu",
     });
   });

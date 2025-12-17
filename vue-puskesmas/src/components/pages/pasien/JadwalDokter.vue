@@ -1,5 +1,5 @@
 <template>
-    <div class="min-h-screen bg-gradient-to-br from-slate-50 via-red-50/30 to-orange-50/20 py-10">
+    <div class="min-h-screen py-10">
         <div class="px-4 mt-15 sm:px-6 md:px-10 max-w-7xl mx-auto">
             <div class="mb-8">
                 <div

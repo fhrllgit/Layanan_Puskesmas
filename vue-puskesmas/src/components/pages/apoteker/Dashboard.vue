@@ -1,359 +1,287 @@
 <template>
-<div class="">
-  <div class="max-w-7xl mx-auto">
-    <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
-      <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-2">
-        <span class="bg-gradient-to-r from-[#d34341] to-[#b83735] bg-clip-text text-transparent">
-          Daftar Resep
-        </span>
-      </h1>
-      <p class="text-gray-600">Menunggu / Siap Diambil</p>
-    </div>
-    <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-      <div class="hidden lg:block overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gradient-to-r from-[#d34341] to-[#b83735]">
-            <tr>
-              <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">ID</th>
-              <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Pasien</th>
-              <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Dokter</th>
-              <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Status</th>
-              <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Tanggal</th>
-              <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Aksi</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <tr v-for="resep in resepList" :key="resep.id" class="hover:bg-red-50 transition-colors duration-150">
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                #{{ resep.id }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex items-center">
-                  <div class="flex-shrink-0 h-10 w-10 bg-gradient-to-br from-[#d34341] to-[#b83735] rounded-full flex items-center justify-center">
-                    <span class="text-white font-semibold">{{ resep.pasien_nama.charAt(0) }}</span>
-                  </div>
-                  <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-900">{{ resep.pasien_nama }}</div>
-                  </div>
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                {{ resep.dokter_nama }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span :class="{
-                  'bg-[#d34341] text-white': resep.status === 'menunggu',
-                  'bg-blue-100 text-blue-700': resep.status === 'siap_diambil',
-                  'bg-green-100 text-green-700': resep.status === 'selesai',
-                  'bg-red-100 text-red-700': resep.status === 'tidak_tersedia',
-                  'bg-yellow-100 text-yellow-700': resep.status === 'expired'
-                }" class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full">
-                  {{ resep.status.replace('_', ' ').toUpperCase() }}
-                </span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                {{ formatDate(resep.tanggal) }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <div class="flex gap-2">
-                  <button @click="lihatDetail(resep.id)" 
-                    class="inline-flex cursor-pointer items-center px-3 py-1.5 bg-[#d34341] hover:bg-[#b83735] text-white text-xs font-medium rounded-lg transition-all duration-150 shadow-sm hover:shadow-md">
-                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                    </svg>
-                    Detail
-                  </button>
-                  <button v-if="resep.status === 'menunggu'" @click="updateStatus(resep.id, 'siap_diambil')"
-                    class="inline-flex cursor-pointer items-center px-3 py-1.5 bg-purple-500 hover:bg-purple-600 text-white text-xs font-medium rounded-lg transition-all duration-150 shadow-sm hover:shadow-md">
-                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                    </svg>
-                    Siap Diambil
-                  </button>
-                  <button v-if="resep.status === 'siap_diambil'" @click="updateStatus(resep.id, 'selesai')"
-                    class="inline-flex cursor-pointer  items-center px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-medium rounded-lg transition-all duration-150 shadow-sm hover:shadow-md">
-                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    Selesai
-                  </button>
-                  <button v-if="resep.status === 'menunggu'" @click="updateStatus(resep.id, 'tidak_tersedia')"
-                    class="inline-flex cursor-pointer  items-center px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-medium rounded-lg transition-all duration-150 shadow-sm hover:shadow-md">
-                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                    Tidak Tersedia
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="lg:hidden p-4 space-y-4">
-        <div v-for="resep in resepList" :key="resep.id" 
-          class="bg-gradient-to-br from-white to-red-50 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-200 p-4 border border-gray-100">
-          <div class="flex items-start justify-between mb-3">
-            <div class="flex items-center">
-              <div class="flex-shrink-0 h-12 w-12 bg-gradient-to-br from-[#d34341] to-[#b83735] rounded-full flex items-center justify-center shadow-md">
-                <span class="text-white font-bold text-lg">{{ resep.pasien_nama.charAt(0) }}</span>
-              </div>
-              <div class="ml-3">
-                <p class="text-sm font-semibold text-gray-600">ID: #{{ resep.id }}</p>
-                <p class="text-lg font-bold text-gray-900">{{ resep.pasien_nama }}</p>
-              </div>
-            </div>
-            <span :class="{
-              'bg-[#d34341] text-white': resep.status === 'menunggu',
-              'bg-blue-100 text-blue-700': resep.status === 'siap_diambil',
-              'bg-green-100 text-green-700': resep.status === 'selesai',
-              'bg-red-100 text-red-700': resep.status === 'tidak_tersedia',
-              'bg-yellow-100 text-yellow-700': resep.status === 'expired'
-            }" class="px-2 py-1 text-xs font-semibold rounded-full whitespace-nowrap">
-              {{ resep.status.replace('_', ' ').toUpperCase() }}
-            </span>
-          </div>
-          
-          <div class="space-y-2 mb-4">
-            <div class="flex items-center text-sm text-gray-600">
-              <svg class="w-4 h-4 mr-2 text-[#d34341]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-              </svg>
-              <span class="font-medium">Dokter:</span>
-              <span class="ml-1">{{ resep.dokter_nama }}</span>
-            </div>
-            <div class="flex items-center text-sm text-gray-600">
-              <svg class="w-4 h-4 mr-2 text-[#d34341]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-              </svg>
-              <span class="font-medium">Tanggal:</span>
-              <span class="ml-1">{{ formatDate(resep.tanggal) }}</span>
-            </div>
-          </div>
-
-          <div class="flex flex-wrap gap-2">
-            <button @click="lihatDetail(resep.id)" 
-              class="flex-1 min-w-[120px] inline-flex items-center justify-center px-3 py-2 bg-[#d34341] hover:bg-[#b83735] text-white text-sm font-medium rounded-lg transition-all duration-150 shadow-sm hover:shadow-md">
-              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-              </svg>
-              Detail
-            </button>
-            <button v-if="resep.status === 'menunggu'" @click="updateStatus(resep.id, 'siap_diambil')"
-              class="flex-1 min-w-[120px] inline-flex items-center justify-center px-3 py-2 bg-purple-500 hover:bg-purple-600 text-white text-sm font-medium rounded-lg transition-all duration-150 shadow-sm hover:shadow-md">
-              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-              </svg>
-              Siap Diambil
-            </button>
-            <button v-if="resep.status === 'siap_diambil'" @click="updateStatus(resep.id, 'selesai')"
-              class="flex-1 min-w-[120px] inline-flex items-center justify-center px-3 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-medium rounded-lg transition-all duration-150 shadow-sm hover:shadow-md">
-              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              </svg>
-              Selesai
-            </button>
-            <button v-if="resep.status === 'menunggu'" @click="updateStatus(resep.id, 'tidak_tersedia')"
-              class="flex-1 min-w-[120px] inline-flex items-center justify-center px-3 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-lg transition-all duration-150 shadow-sm hover:shadow-md">
-              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-              </svg>
-              Tidak Tersedia
-            </button>
-          </div>
+  <div class="min-h-screen bg-slate-50">
+    <div class="mb-8">
+      <div class="flex items-center justify-between mb-2">
+        <div>
+          <h1 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#d34341d6] to-[#d34341]">
+            Dashboard Apoteker
+          </h1>
+          <p class="text-gray-500 mt-1">Selamat datang di sistem apoteker</p>
+        </div>
+        <div class="flex items-center gap-3 px-5 py-3 bg-white rounded-xl shadow-md border border-gray-200">
+          <div class="w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></div>
+          <span class="text-sm font-semibold text-gray-700">{{ currentDate }}</span>
         </div>
       </div>
     </div>
 
-    <div v-if="showDetail" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center p-4 z-50 animate-fadeIn">
-      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden animate-slideUp">
-        <div class="bg-gradient-to-r from-[#d34341] to-[#b83735] px-6 py-4">
-          <h2 class="text-2xl font-bold text-white">Detail Resep #{{ detailResep.id }}</h2>
-        </div>
-        <div class="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
-          <div class="space-y-4 mb-6">
-            <div class="flex items-start p-4 bg-red-50 rounded-lg">
-              <div class="flex-shrink-0 h-12 w-12 bg-gradient-to-br from-[#d34341] to-[#b83735] rounded-full flex items-center justify-center shadow-md">
-                <span class="text-white font-bold text-lg">{{ detailResep.pasien_nama.charAt(0) }}</span>
-              </div>
-              <div class="ml-4 flex-1">
-                <p class="text-sm text-gray-600 font-medium">Pasien</p>
-                <p class="text-lg font-bold text-gray-900">{{ detailResep.pasien_nama }}</p>
-              </div>
+    <main class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div v-for="(stat, index) in stats" :key="index"
+          class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-gray-600 mb-1">{{ stat.title }}</p>
+              <p class="text-3xl font-bold text-gray-900">{{ stat.value }}</p>
             </div>
-
-            <div class="flex items-start p-4 bg-rose-50 rounded-lg">
-              <svg class="w-6 h-6 text-[#d34341] mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-              </svg>
-              <div class="ml-4 flex-1">
-                <p class="text-sm text-gray-600 font-medium">Dokter</p>
-                <p class="text-lg font-semibold text-gray-900">{{ detailResep.dokter_nama }}</p>
-              </div>
-            </div>
-
-            <div class="flex items-start p-4 bg-red-50 rounded-lg">
-              <svg class="w-6 h-6 text-[#d34341] mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              </svg>
-              <div class="ml-4 flex-1">
-                <p class="text-sm text-gray-600 font-medium">Status</p>
-                <span :class="{
-                  'bg-[#d34341] text-white': detailResep.status === 'menunggu',
-                  'bg-blue-100 text-blue-700': detailResep.status === 'siap_diambil',
-                  'bg-green-100 text-green-700': detailResep.status === 'selesai',
-                  'bg-red-100 text-red-700': detailResep.status === 'tidak_tersedia',
-                  'bg-yellow-100 text-yellow-700': detailResep.status === 'expired'
-                }" class="inline-block mt-1 px-3 py-1 text-sm font-semibold rounded-full">
-                  {{ detailResep.status.replace('_', ' ').toUpperCase() }}
-                </span>
-              </div>
+            <div :class="stat.bgColor + ' p-3 rounded-lg'">
+              <component :is="stat.icon" :class="stat.iconColor" class="w-7 h-7" />
             </div>
           </div>
+        </div>
+      </div>
 
-          <div class="border-t pt-4">
-            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
-              <svg class="w-5 h-5 mr-2 text-[#d34341]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-              </svg>
-              Daftar Obat
-            </h3>
-            <div class="space-y-3">
-              <div v-for="(item, index) in detailItems" :key="item.id" 
-                class="p-4 bg-gradient-to-br from-gray-50 to-red-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow duration-150">
-                <div class="flex items-start">
-                  <div class="flex-shrink-0 w-8 h-8 bg-[#d34341] text-white rounded-full flex items-center justify-center font-bold text-sm">
-                    {{ index + 1 }}
-                  </div>
-                  <div class="ml-3 flex-1">
-                    <p class="font-bold text-gray-900 text-lg">{{ item.nama_obat }}</p>
-                    <div class="mt-2 space-y-1">
-                      <p class="text-sm text-gray-700">
-                        <span class="font-semibold text-[#d34341]">Dosis:</span> {{ item.dosis }}
-                      </p>
-                      <p class="text-sm text-gray-700">
-                        <span class="font-semibold text-[#d34341]">Jumlah:</span> {{ item.jumlah }}
-                      </p>
-                      <p class="text-sm text-gray-700">
-                        <span class="font-semibold text-[#d34341]">Keterangan:</span> {{ item.keterangan }}
-                      </p>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div class="lg:col-span-2">
+          <div class="bg-white rounded-xl shadow-md p-6">
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-xl font-bold text-gray-900">Resep Terbaru</h2>
+              <button class="text-[#d34341] hover:text-[#b13330] text-sm font-semibold flex items-center gap-1">
+                Lihat Semua
+                <EyeIcon class="w-4 h-4" />
+              </button>
+            </div>
+
+            <div class="overflow-x-auto max-h-100 scrollbar-hide">
+              <!-- <span>OTWWWW KERJA</span> -->
+              <table class="w-full">
+                <thead>
+                  <tr class="border-b border-gray-200">
+                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">No Resep</th>
+                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Nama Pasien</th>
+                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Jenis Resep</th>
+                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(item, i) in resepGabungan" :key="i"
+                    class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                    <td class="py-3 px-4 text-sm font-medium text-gray-900">RS{{ item.id }}</td>
+                    <td class="py-3 px-4 text-sm text-gray-700">
+                      <div class="flex items-center">
+                        <div
+                          class="flex-shrink-0 h-10 w-10 bg-gradient-to-br from-[#d34341] to-[#b83735] rounded-full flex items-center justify-center">
+                          <span class="text-white font-semibold">{{ item.pasien_nama.charAt(0)
+                          }}</span>
+                        </div>
+                        <div class="ml-4">
+                          <div class="text-sm font-medium text-gray-900">{{ item.pasien_nama }}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="py-3 px-4 text-sm text-gray-700">{{ item.tipe }}</td>
+                    <td class="py-3 px-4">
+                         <span class="border w-23 items-center justify-center flex py-1.5 rounded-full text-xs font-semibold"
+                    :class="colorStatus(item.status)">
+                    {{ item.status }}
+                  </span>
+                      <!-- <span :class="['inline-flex px-3 py-1 rounded-full text-xs font-semibold border', getStatusBadge(prescription.status)]">
+                        {{ getStatusText(prescription.status) }}
+                      </span> -->
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="bg-white rounded-xl shadow-md p-6">
+            <h2 class="text-xl font-bold text-gray-900 mb-6">Akses Cepat</h2>
+            <div class="space-y-4">
+              <button @click="goTo(item.to)" v-for="item in quickActions" :key="index"
+                class="w-full cursor-pointer group">
+                <div
+                  :class="`bg-gradient-to-r ${item.bgGradient} rounded-lg p-4 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1`">
+                  <div class="flex items-start gap-3">
+                    <div class="bg-white/20 p-2 rounded-lg">
+                      <component :is="item.icon" class="text-white w-6 h-6" />
+                    </div>
+                    <div class="text-left flex-1">
+                      <h3 class="text-white font-semibold text-sm mb-1">{{ item.title }}</h3>
+                      <p class="text-white/90 text-xs">{{ item.description }}</p>
                     </div>
                   </div>
                 </div>
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl shadow-md p-6 mt-6">
+            <div class="flex items-center gap-2 mb-4">
+              <TrendingUpIcon class="text-[#d34341] w-5 h-5" />
+              <h2 class="text-lg font-bold text-gray-900">Statistik Mingguan</h2>
+            </div>
+            <div class="space-y-3">
+              <div v-for="stat in weeklyStats" :key="stat.label">
+                <div class="flex justify-between text-sm mb-1">
+                  <span class="text-gray-600">{{ stat.label }}</span>
+                  <span class="font-semibold text-gray-900">{{ stat.value }}</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div :class="stat.color + ' h-2 rounded-full'" :style="{ width: stat.percentage }"></div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="bg-gray-50 px-6 py-4 flex justify-end border-t">
-          <button @click="closeDetail" 
-            class="inline-flex items-center cursor-pointer px-6 py-2.5 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-all duration-150 shadow-sm hover:shadow-md">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-            </svg>
-            Tutup
-          </button>
-        </div>
       </div>
-    </div>
+    </main>
   </div>
-</div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import axios from "axios";
+import { ref, computed, onMounted } from 'vue';
+import { Bell, Package, FileText, CheckCircle, Clock, TrendingUp, Plus, Eye } from 'lucide-vue-next';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
 import { io } from "socket.io-client"
-import Swal from "sweetalert2";
 
-const resepList = ref([]);
-const detailResep = ref({});
-const detailItems = ref([]);
-const showDetail = ref(false);
+const router = useRouter()
+const resepList = ref([])
+// const gabungGetresep = ref([])
+console.log(resepList)
+const resepKonsul = ref([])
+console.log(resepKonsul)
+const token = localStorage.getItem("token")
 const socket = io("http://localhost:3003")
 
+// http://localhost:3003/api/apoteker/resep
+
 socket.on("resepStatusUpdated", (data) => {
-    console.log("Resep diperbarui:", data);
-    const index = resepList.value.findIndex(r => r.id === data.id);
-    if (index !== -1) {
-        resepList.value[index].status = data.status;
-        resepList.value[index].apoteker_id = data.apoteker_id;
-    }
+  console.log("Resep diperbarui:", data);
+  const index = resepList.value.findIndex(r => r.id === data.id);
+  if (index !== -1) {
+    resepList.value[index].status = data.status;
+    resepList.value[index].apoteker_id = data.apoteker_id;
+  }
+});
+
+socket.on("resepKonsultasiStatusUpdated", (data) => {
+  console.log("Realtime diterima:", data);
+
+  const index = resepList.value.findIndex(r => r.id === data.id);
+  if (index !== -1) {
+    resepList.value[index].status = data.status;
+  }
 });
 
 const getResep = async () => {
-    try {
-        const res = await axios.get("http://localhost:3003/api/apoteker/resep", {
-            headers: { Authorization: "Bearer " + localStorage.getItem("token") }
-        });
-        resepList.value = res.data;
-    } catch (err) {
-        console.error(err);
-    }
+  try {
+    const res = await axios.get(`http://localhost:3003/api/apoteker/resep`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    resepList.value = res.data
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+const fetchKonsultasi = async () => {
+  try {
+    const res = await axios.get(`http://localhost:3003/api/apoteker/resep-konsultasi`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    resepKonsul.value = res.data
+    // debug
+    // console.log(resepKonsul.value = res.data)
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+const resepGabungan = computed(() => {
+  return [
+    ...resepList.value.map(item => ({
+      ...item,
+      tipe: 'berobat',
+      sumber_id: item.rekam_id
+    })),
+    ...resepKonsul.value.map(item => ({
+      ...item,
+      tipe: 'konsultasi',
+      sumber_id: item.konsultasi_id
+    }))
+  ]
+})
+
+
+const currentDate = computed(() => {
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  return new Date().toLocaleDateString('id-ID', options);
+});
+
+const goTo = (path) => {
+  router.push(path)
+}
+
+const stats = computed(() => [
+  { title: 'Resep Berobat Hari Ini', value: resepList.value?.length || 0, icon: Package, bgColor: 'bg-red-50', iconColor: 'text-[#d34341]' },
+  { title: 'Resep Konsultasi', value: resepKonsul.value?.length || 0, icon: FileText, bgColor: 'bg-red-50', iconColor: 'text-[#d34341]' },
+  { title: 'Menunggu Proses', value: '7', icon: Clock, bgColor: 'bg-amber-50', iconColor: 'text-amber-600' },
+  { title: 'Resep Selesai', value: '35', icon: CheckCircle, bgColor: 'bg-emerald-50', iconColor: 'text-emerald-600' }
+])
+
+
+// status ENUM('menunggu','siap_diambil','tidak_tersedia','selesai', 'expired') DEFAULT 'menunggu',
+
+const colorStatus = (status) => {
+  const s = status.toLowerCase()
+  if (s.includes("menunggu"))
+    return "text-blue-600 bg-blue-100"
+
+  if (s.includes("siap_diambil"))
+    return "text-red-600 bg-red-100"
+
+  if (s.includes("tidak_tersedia"))
+    return "text-green-600 bg-green-100"
+
+  if (s.includes("selesai"))
+    return "text-yellow-600 bg-yellow-100"
+  
+  if (s.includes("expried"))
+    return "text-red-600 bg-red-100"
+
+  return "text-gray-500 bg-gray-100"
+}
+
+const quickActions = [
+  { title: 'Dashboard', to: '/apoteker/dashboard', description: 'Lihat statistik total obat hari ini', icon: Plus, bgGradient: 'from-[#d34341] to-[#b13330]' },
+  { title: 'Lihat Resep Berobat', to: '/apoteker/berobat-resep', description: 'Kelola resep pasien berobat', icon: Package, bgGradient: 'from-[#d34341] to-[#b13330]' },
+  { title: 'Lihat Resep Konsultasi', to: '/apoteker/konsultasi-resep', description: 'Kelola resep konsultasi online', icon: FileText, bgGradient: 'from-[#d34341] to-[#b13330]' }
+];
+
+const getStatusBadge = (status) => {
+  const styles = {
+    menunggu: 'bg-amber-100 text-amber-700 border-amber-200',
+    diproses: 'bg-blue-100 text-blue-700 border-blue-200',
+    selesai: 'bg-emerald-100 text-emerald-700 border-emerald-200'
+  };
+  return styles[status] || styles.menunggu;
 };
 
-const lihatDetail = async (id) => {
-    try {
-        const res = await axios.get(`http://localhost:3003/api/apoteker/resep/${id}`, {
-            headers: { Authorization: "Bearer " + localStorage.getItem("token") }
-        });
-        detailResep.value = res.data.resep;
-        detailItems.value = res.data.items;
-        showDetail.value = true;
-    } catch (err) {
-        console.error(err);
-    }
+const getStatusText = (status) => {
+  const text = {
+    menunggu: 'Menunggu',
+    diproses: 'Diproses',
+    selesai: 'Selesai'
+  };
+  return text[status] || status;
 };
 
-const formatDate = (dateStr) => {
-  if (!dateStr || dateStr === "-") return "-";
-  const date = new Date(dateStr);
-  return date.toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" });
-};
-
-const closeDetail = () => {
-    showDetail.value = false;
-    detailResep.value = {};
-    detailItems.value = [];
-};
-
-const updateStatus = async (id, status) => {
-    try {
-        await axios.patch(
-            `http://localhost:3003/api/apoteker/resep/${id}/status`,
-            { status },
-            {
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("token")
-                }
-            }
-        );
-
-        Swal.fire({
-            icon: "success",
-            title: "Berhasil",
-            text: `Status resep berhasil diubah menjadi "${status}"`,
-            timer: 1500,
-            showConfirmButton: false
-        });
-
-        getResep(); 
-    } catch (err) {
-        console.error(err);
-        Swal.fire({
-            icon: "error",
-            title: "Gagal",
-            text: err.response?.data?.msg || "Terjadi kesalahan",
-        });
-    }
-};
-
+const weeklyStats = [
+  { label: 'Resep Berobat', value: 156, percentage: '78%', color: 'bg-[#d34341]' },
+  { label: 'Resep Konsultasi', value: 98, percentage: '49%', color: 'bg-[#d34341]' },
+  { label: 'Total Diselesaikan', value: 245, percentage: '96%', color: 'bg-emerald-500' }
+];
 
 onMounted(() => {
-    getResep();
-});
+  getResep()
+  fetchKonsultasi()
+})
 </script>
-
-<style scoped>
-</style>

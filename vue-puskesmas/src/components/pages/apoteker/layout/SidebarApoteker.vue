@@ -1,208 +1,240 @@
 <template>
-<div>
-  <!-- Sidebar Desktop & Tablet -->
-  <div class="hidden md:flex h-screen w-72 flex-col bg-gradient-to-b from-white to-red-50 border-r border-gray-200 shadow-lg">
-    <!-- Header Logo -->
-    <div class="px-5 py-6 border-b border-gray-200">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="w-12 h-12 bg-gradient-to-br from-[#d34341] to-[#b83735] rounded-xl flex items-center justify-center shadow-md">
-            <img src="../../assets/img/logoS.png" alt="Logo" class="w-8 h-8 object-cover">
-            <img src="" alt="">
+  <div v-if="isMobile || isCollapsed"
+    class="h-screen relative w-20 z-50 bg-gradient-to-br from-white via-red-50 to-red-100/30 shadow-2xl border-r border-gray-200/50">
+    <div class="flex flex-col items-center py-6 h-full">
+      <div class="relative mb-8 group">
+        <div class="absolute inset-0 bg-[#d34341] blur-xl opacity-30 group-hover:opacity-50 transition-opacity rounded-full"></div>
+        <img src="../../../../assets/img/prevLogo.png" class="relative  w-12 h-12 rounded-2xl shadow-xl ring-2 ring-[#d34341]/20" />
+        <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-400 rounded-full border-2 border-white shadow-lg shadow-emerald-500/50"></div>
+      </div>
+      <div v-if="!isMobile" @click="toggleSidebar"
+        class="absolute z-20 mt-2 ml-23 cursor-pointer shadow-xl bg-white cursor-pointer w-7 h-7 flex items-center justify-center rounded-full hover:scale-110 transition-all border border-gray-200 hover:border-[#d34341]/30">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4 text-[#d34341]">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+        </svg>
+      </div>
+      <div class="flex-1 flex flex-col items-center gap-4 mt-2 w-full px-2">
+        <button v-for="menu in menuItems" :key="menu.name" @click="handleMobileMenu(menu)"
+          class="w-14 h-14 cursor-pointer flex items-center justify-center rounded-2xl transition-all duration-300 relative group backdrop-blur-sm"
+          :class="isActiveMobile(menu)
+            ? 'bg-gradient-to-br from-[#d34341] to-[#b83735] text-white shadow-2xl shadow-[#d34341]/30 scale-105'
+            : 'text-gray-600 hover:bg-white hover:text-[#d34341] hover:scale-105 hover:shadow-lg'">
+          <component :is="menu.icon" class="w-6 h-6" />
+          <div class="absolute left-full ml-4 px-4 py-2 bg-white text-gray-800 text-sm rounded-xl
+                      opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50 shadow-2xl border border-gray-200">
+            {{ menu.name }}
+            <div class="absolute right-full top-1/2 -translate-y-1/2 border-8 border-transparent border-r-white"></div>
           </div>
-          <div class="flex flex-col">
-            <span class="text-lg font-bold text-gray-800">Sisma Dokter</span>
-            <p class="text-xs text-gray-500">Healthcare Portal</p>
-          </div>
-        </div>
-        <button class="hidden lg:flex items-center justify-center w-9 h-9 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 transition-colors duration-150 shadow-sm">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 text-[#d34341]">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h16.5" />
-          </svg>
         </button>
       </div>
-    </div>
-
-    <!-- Navigation Menu -->
-    <nav class="flex-1 px-3 py-6 space-y-2 overflow-y-auto">
-      <RouterLink to="/apoteker/dashboard" 
-        class="group flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-[#d34341] hover:text-white transition-all duration-200 ease-in-out">
-        <span class="flex-shrink-0">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25" />
-          </svg>
-        </span>
-        <p class="text-sm font-semibold">Dashboard</p>
-        <span class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
-            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-          </svg>
-        </span>
-      </RouterLink>
-
-      <RouterLink to="/apoteker/konsultasi-resep" 
-        class="group flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-[#d34341] hover:text-white transition-all duration-200 ease-in-out">
-        <span class="flex-shrink-0">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-          </svg>
-        </span>
-        <p class="text-sm font-semibold">Resep Konsultasi</p>
-        <span class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
-            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-          </svg>
-        </span>
-      </RouterLink>
-    </nav>
-
-    <!-- Logout Button -->
-    <div class="px-3 py-4 border-t border-gray-200">
-      <button @click="handleLogout" 
-        class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#d34341] to-[#b83735] text-white rounded-xl font-semibold hover:shadow-lg hover:scale-[1.02] transition-all duration-200 ease-in-out">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+      <button @click="handleLogout"
+        class="w-10 h-10 mb-7 rounded-xl bg-red-50 hover:bg-red-100 flex items-center justify-center transition-all group/logout border border-red-200/50 hover:border-red-300">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-red-500 group-hover/logout:text-red-600">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
         </svg>
-        Logout
       </button>
     </div>
-  </div>
-
-  <!-- Mobile Bottom Navigation -->
-  <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
-    <div class="flex items-center justify-around py-2">
-      <RouterLink to="/apoteker/dashboard" 
-        class="flex flex-col items-center gap-1 px-4 py-2 text-gray-600 hover:text-[#d34341] transition-colors duration-150">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25" />
-        </svg>
-        <span class="text-xs font-medium">Dashboard</span>
-      </RouterLink>
-
-      <RouterLink to="/apoteker/konsultasi-resep" 
-        class="flex flex-col items-center gap-1 px-4 py-2 text-gray-600 hover:text-[#d34341] transition-colors duration-150">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-        </svg>
-        <span class="text-xs font-medium">Resep</span>
-      </RouterLink>
-
-      <button @click="handleLogout" 
-        class="flex flex-col items-center gap-1 px-4 py-2 text-gray-600 hover:text-[#d34341] transition-colors duration-150">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
-        </svg>
-        <span class="text-xs font-medium">Logout</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- Mobile Header -->
-  <div class="md:hidden fixed top-0 left-0 right-0 bg-white border-b border-gray-200 shadow-sm z-40">
-    <div class="flex items-center justify-between px-4 py-3">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 bg-gradient-to-br from-[#d34341] to-[#b83735] rounded-lg flex items-center justify-center shadow-md">
-          <img src="../../assets/img/prevLogo.png" alt="Logo" class="w-6 h-6 object-cover">
+    <transition name="overlay">
+      <div v-if="mobileSubmenu" class="fixed inset-0 bg-black/50 backdrop-blur-md z-40" @click="mobileSubmenu = null" />
+    </transition>
+    <transition name="submenu">
+      <div v-if="mobileSubmenu"
+        class="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl p-6 z-50 shadow-2xl max-h-[70vh] overflow-y-auto border-t border-gray-200">
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#d34341]/10 to-[#b83735]/10 flex items-center justify-center border border-[#d34341]/20">
+              <component :is="mobileSubmenu.icon" class="w-6 h-6 text-[#d34341]" />
+            </div>
+            <h3 class="font-bold text-xl text-gray-800">{{ mobileSubmenu.name }}</h3>
+          </div>
+          <button @click="mobileSubmenu = null" class="w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-all">
+            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
-        <div class="flex flex-col">
-          <span class="text-base font-bold text-gray-800">Sisma Dokter</span>
-          <p class="text-xs text-gray-500">Healthcare Portal</p>
+        <div class="space-y-3">
+          <RouterLink v-for="child in mobileSubmenu.children" :key="child.to" :to="child.to"
+            @click="mobileSubmenu = null"
+            class="block px-5 py-4 rounded-xl font-medium transition-all duration-300"
+            :class="route.path === child.to
+              ? 'bg-gradient-to-r from-[#d34341] to-[#b83735] text-white shadow-xl shadow-[#d34341]/30'
+              : 'bg-gray-50 hover:bg-gray-100 text-gray-700 hover:text-gray-900'">
+            {{ child.name }}
+          </RouterLink>
         </div>
       </div>
-      <button class="flex items-center justify-center w-9 h-9 rounded-lg bg-red-50 hover:bg-red-100 transition-colors duration-150">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 text-[#d34341]">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+    </transition>
+  </div>
+
+  <div v-else class="h-screen w-100 z-50  shadow-2xl border-r border-gray-200/50 relative overflow-hidden">
+    <div class="absolute top-20 left-12 w-32 h-32 border-2 border-[#d34341]/10 rounded-2xl rotate-12 animate-float"></div>
+    <div class="absolute top-1/3 right-10 w-24 h-24 border-2 border-[#d34341]/10 rounded-2xl -rotate-6 animate-float" style="animation-delay:2s;"></div>
+    <div class="absolute bottom-40 left-1/4 w-28 h-28 border-2 border-[#d34341]/10 rounded-2xl rotate-45 animate-float" style="animation-delay:4s;"></div>
+    <div class="flex relative flex-col h-full p-6 z-10">
+      <div @click="toggleSidebar"
+        class="absolute z-10 mt-3 right-0 mr-2 shadow-xl bg-white cursor-pointer w-7 h-7 flex items-center justify-center rounded-full hover:scale-110 transition-all border border-gray-200 hover:border-[#d34341]/30">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4 text-[#d34341]">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
         </svg>
-      </button>
+      </div>
+      <div class="flex items-center justify-between mb-8 pb-6 border-b border-gray-200/50">
+        <div class="flex items-center gap-4">
+          <div class="relative group">
+            <div class="absolute inset-0 bg-[#d34341] blur-xl opacity-30 group-hover:opacity-50 transition-opacity rounded-2xl"></div>
+            <img src="../../../../assets/img/prevLogo.png" class="relative w-14 h-14 rounded-2xl shadow-xl ring-2 ring-[#d34341]/20" />
+            <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-400 rounded-full border-2 border-white shadow-lg shadow-emerald-500/50"></div>
+          </div>
+          <div>
+            <p class="font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#d34341] to-[#b83735] text-xl">Sisma Apoteker</p>
+            <p class="text-sm text-gray-500 font-light">Healthcare Portal</p>
+          </div>
+        </div>
+      </div>
+      <div class="flex-1 space-y-2 overflow-y-auto pr-1 pl-1 menu-section">
+        <div v-for="(menu, index) in menuItems" :key="index">
+          <div v-if="menu.children">
+            <button @click="toggleMenu(index)"
+              class="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-300 group"
+              :class="isActiveDesktop(menu)
+                ? 'bg-gradient-to-r from-[#d34341] to-[#b83735] text-white shadow-2xl shadow-[#d34341]/30 scale-[1.02]'
+                : 'bg-white/80 hover:bg-white text-gray-700 hover:text-gray-900 hover:shadow-lg border border-gray-200/50 hover:border-[#d34341]/30'">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center transition-all"
+                  :class="isActiveDesktop(menu) ? 'bg-white/20' : 'bg-[#d34341]/10 group-hover:bg-[#d34341]/20'">
+                  <component :is="menu.icon" class="w-5 h-5" />
+                </div>
+                <span class="font-semibold line-clamp-1 text-start text-sm">{{ menu.name }}</span>
+              </div>
+              <svg class="w-4 h-4 transition-transform duration-300" :class="{ 'rotate-90': openMenu.includes(index) }"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+            <transition name="submenu-expand">
+              <div v-show="openMenu.includes(index)" class="ml-6 mt-2 space-y-2 pl-5 border-l-2 border-[#d34341]/30">
+                <RouterLink v-for="child in menu.children" :key="child.to" :to="child.to"
+                  class="block px-5 py-3 rounded-xl text-sm transition-all mt-2 duration-300 font-medium"
+                  :class="route.path === child.to
+                    ? 'bg-gradient-to-r from-[#d34341] to-[#b83735] text-white shadow-xl shadow-[#d34341]/20'
+                    : 'bg-white/60 hover:bg-white text-gray-600 hover:text-gray-900 border border-gray-200/50 hover:border-[#d34341]/30'">
+                  {{ child.name }}
+                </RouterLink>
+              </div>
+            </transition>
+          </div>
+          <RouterLink v-else :to="menu.to"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition-all duration-300 group"
+            :class="route.path === menu.to
+              ? 'bg-gradient-to-r from-[#d34341] to-[#b83735] text-white shadow-2xl shadow-[#d34341]/30 scale-[1.02]'
+              : 'bg-white/80 hover:bg-white text-gray-700 hover:text-gray-900 hover:shadow-lg border border-gray-200/50 hover:border-[#d34341]/30'">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center transition-all"
+              :class="route.path === menu.to ? 'bg-white/20' : 'bg-[#d34341]/10 group-hover:bg-[#d34341]/20'">
+              <component :is="menu.icon" class="w-5 h-5" />
+            </div>
+            <span class="text-sm">{{ menu.name }}</span>
+          </RouterLink>
+        </div>
+      </div>
+      <div class="pt-6 mt-6 border-t border-gray-200/50">
+        <div class="flex items-center gap-4 px-4 py-3 rounded-xl bg-white/80 border border-gray-200/50 hover:border-[#d34341]/30 hover:shadow-lg transition-all group">
+          <div class="relative w-11 h-11 rounded-2xl bg-gradient-to-br from-[#d34341] to-[#b83735] flex items-center justify-center text-white font-bold text-base shadow-xl ring-2 ring-[#d34341]/30">
+            A
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold text-gray-800 text-sm truncate">Apoteker User</p>
+            <p class="text-xs text-gray-500 truncate">apoteker@sisma.com</p>
+          </div>
+          <button @click="handleLogout"
+            class="w-9 h-9 cursor-pointer rounded-xl bg-red-50 hover:bg-red-100 flex items-center justify-center transition-all group/logout border border-red-200/50 hover:border-red-300">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+              stroke="currentColor" class="w-5 h-5 text-red-500 group-hover/logout:text-red-600">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+            </svg>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
-import { RouterLink } from 'vue-router'
+import { ref, onMounted, onUnmounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import {
+  HomeIcon,
+  ClipboardDocumentListIcon,
+  DocumentTextIcon
+} from '@heroicons/vue/24/outline'
 import axios from 'axios';
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 
+const route = useRoute()
+const router = useRouter()
+const api_url = "http://localhost:3003"
+const isMobile = ref(false)
+const isCollapsed = ref(false)
 const openMenu = ref([])
-const api_url = "http://localhost:3003";
+const mobileSubmenu = ref(null)
 
-onMounted(() => {
-  const saved = localStorage.getItem("openMenus")
-  if (saved) {
-    try {
-      openMenu.value = JSON.parse(saved)
-    } catch (e) {
-      openMenu.value = []
-    }
-  }
-})
+const menuItems = [
+  { name: 'Dashboard', icon: HomeIcon, to: '/apoteker/dashboard' },
+  { name: 'Resep Berobat', icon: ClipboardDocumentListIcon, to: '/apoteker/berobat-resep' },
+  { name: 'Resep Konsultasi', icon: ClipboardDocumentListIcon, to: '/apoteker/konsultasi-resep' },
+]
 
 const handleLogout = async () => {
   const token = localStorage.getItem("token");
   if (!token) {
-    Swal.fire({
-      icon: "warning",
-      title: "Oops...",
-      text: "Kamu belum login!",
-    });
+    Swal.fire({ icon: "warning", title: "Oops...", text: "Kamu belum login!" });
     return;
   }
 
   try {
-    await axios.post(
-      `${api_url}/api/users/logout`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
+    await axios.post(`${api_url}/api/users/logout`, {}, { headers: { Authorization: `Bearer ${token}` } });
     localStorage.removeItem("token");
     localStorage.removeItem("user");
 
-    Swal.fire({
-      icon: "success",
-      title: "Logout berhasil!",
-      showConfirmButton: false,
-      timer: 1500,
-    }).then(() => {
-      window.location.href = "/login";
-    });
+    Swal.fire({ icon: "success", title: "Logout berhasil!", showConfirmButton: false, timer: 1500 })
+      .then(() => window.location.href = "/login");
   } catch (err) {
-    console.error("Logout gagal:", err);
-    Swal.fire({
-      icon: "error",
-      title: "Gagal logout",
-      text: "Terjadi kesalahan saat logout",
-    });
+    Swal.fire({ icon: "error", title: "Gagal logout", text: "Terjadi kesalahan saat logout" });
   }
 };
-</script>
 
-<style>
-/* Active Link Styling */
-.router-link-active {
-  /* background: linear-gradient(135deg, #d34341 0%, #b83735 100%); */
-  color: white;
-}
-
-.router-link-active svg {
-  color: white;
-}
-
-/* Smooth transitions */
-* {
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* Remove bottom nav space for content */
-@media (max-width: 768px) {
-  body {
-    padding-bottom: 70px;
+const checkMobile = () => {
+  isMobile.value = window.innerWidth < 768;
+  if (isMobile.value) {
+    isCollapsed.value = false
+    mobileSubmenu.value = null
   }
 }
-</style>
+
+const toggleSidebar = () => {
+  isCollapsed.value = !isCollapsed.value
+  if (isCollapsed.value) mobileSubmenu.value = null
+}
+
+const toggleMenu = (i) => {
+  if (openMenu.value.includes(i)) openMenu.value = openMenu.value.filter(x => x !== i)
+  else openMenu.value.push(i)
+}
+
+const handleMobileMenu = (menu) => {
+  if (menu.children) mobileSubmenu.value = menu
+  else router.push(menu.to)
+}
+
+const isActiveMobile = (menu) => menu.children ? menu.children.some(c => c.to === route.path) : route.path === menu.to
+const isActiveDesktop = (menu) => menu.children ? menu.children.some(c => c.to === route.path) : false
+
+onMounted(() => {
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkMobile)
+})
+</script>

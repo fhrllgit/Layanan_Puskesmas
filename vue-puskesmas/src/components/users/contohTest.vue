@@ -1,7 +1,6 @@
 
 <template>
     <div class="fixed inset-0 flex flex-col bg-[#0b141a]">
-        <!-- Header dokter -->
         <div class="flex items-center gap-3 p-4 bg-[#202c33] text-[#e9edef] shadow-lg">
             <button @click="$router.back()" class="p-2 hover:bg-[#2a3942] rounded-full transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -21,7 +20,6 @@
             </div>
         </div>
 
-        <!-- Chat messages -->
         <div class="flex-1 overflow-y-auto p-3 md:p-4 space-y-2 md:space-y-3" ref="chatBox"
             style="background-image: url('data:image/svg+xml,...');">
             <div v-for="msg in messages" :key="msg.id"
@@ -34,7 +32,6 @@
 
                     <p class="text-sm md:text-base leading-relaxed whitespace-pre-wrap">{{ msg.pesan }}</p>
 
-                    <!-- Lihat Resep jika ada -->
                     <!-- <span v-if="msg.isResep" class="text-[#25d366] text-xs font-semibold block mt-1 cursor-pointer"
                         @click="lihatResep(msg.id)">
                         [Lihat Resep]
@@ -52,7 +49,6 @@
             </div>
         </div>
 
-        <!-- Input chat -->
         <div class="bg-[#202c33] border-t border-[#2a3942] p-3 md:p-4 flex-shrink-0">
             <div class="flex gap-2 md:gap-3 items-center max-w-5xl mx-auto">
                 <input v-model="pesan" @keyup.enter="kirimPesan" placeholder="Ketik pesan..."

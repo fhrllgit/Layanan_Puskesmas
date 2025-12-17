@@ -50,7 +50,6 @@ const menuItems = [
   { text: "Beranda", to: "/dokter/dashboard", icon: HomeIcon },
   { text: "Jadwal Saya", to: "/dokter/jadwal-dokter", icon: ClipboardIcon },
   { text: "Antrian Pasien", to: "/dokter/dokter-pasien", icon: List },
-  { text: "Rekam Medis", to: "/dokter/rekam-medis", icon: ClockIcon },
   { text: "Profil", to: "/dokter/profil", icon: FileText },
   { text: "Konsultasi Pasien", to: "/feedback-pasien", icon: FileText }
 ];

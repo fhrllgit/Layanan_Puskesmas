@@ -1,66 +1,91 @@
 <template>
-  <div class="h-full">
-    <div class="mt-25 px-4 sm:px-6 md:px-10">
-      <div class="flex items-center gap-3 text-xs">
-        <button @click="$router.push('/pasien/dashboard')" class="text-[#d34341] cursor-pointer">Home</button>
-        <span>></span>
-        <p>Tanya Dokter</p>
+  <div class="h-full bg-gray-50">
+    <div class="bg-white mt-20 border-b border-gray-200">
+      <div class="px-4 sm:px-6 lg:px-10 py-4">
+        <div class="flex items-center gap-2 text-xs sm:text-sm">
+          <button @click="$router.push('/pasien/dashboard')"
+            class="text-[#d34341] text-sm hover:text-[#b12b29] transition-colors">Home</button>
+          <span class="text-gray-400">></span>
+          <p class="text-gray-700 text-sm">Tanya Dokter</p>
+        </div>
       </div>
-      <div class="flex mt-10 h-full min-h-screen overflow-hidden">
-        <div class="flex-1">
-          <div class="flex flex-col gap-2">
-            <h1 class="text-center text-xl font-semibold">Chat Dokter di Sisma</h1>
-            <p class="text-md text-[#5d5c5c] text-center">Lorem ipsum dolor sit amet consectetur adipisicing elit. Iusto dolorem dolorum non tenetur?</p>
+    </div>
+    <div class="px-4 sm:px-6 lg:px-10 py-6 lg:py-10">
+      <div class="flex flex-col lg:flex-row gap-6 lg:gap-8">
+        <div class="w-full lg:w-2/5 xl:w-1/3 space-y-6">
+          <div class="text-center lg:text-left">
+            <h1 class="text-xl sm:text-2xl font-semibold text-gray-900">Chat Dokter di Sisma</h1>
+            <p class="mt-2 text-sm sm:text-base text-gray-600">Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              Iusto dolorem dolorum non tenetur?</p>
           </div>
-          <div class="w-70 mt-10 mx-auto overflow-hidden relative">
-            <div class="flex transition-transform duration-500"
-              :style="{ transform: `translateX(-${currentIndex * 100}%)` }">
-              <div v-for="(item, index) in slides" :key="index" class="flex-shrink-0 w-full justify-center items-center flex">
-                <img :src="item.img" :alt="item.text" class="w-40 h-auto object-cover" />
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div class="overflow-hidden">
+              <div class="flex transition-transform duration-500"
+                :style="{ transform: `translateX(-${currentIndex * 100}%)` }">
+                <div v-for="(item, index) in slides" :key="index"
+                  class="flex-shrink-0 w-full flex justify-center items-center">
+                  <img :src="item.img" :alt="item.text" class="w-32 h-32 sm:w-40 sm:h-40 object-contain" />
+                </div>
               </div>
             </div>
-            <div class="mt-5 text-center font-semibold">
+            <div class="mt-4 text-center font-medium text-gray-800">
               {{ slides[currentIndex].text }}
             </div>
-            <div class="flex justify-center gap-2 mt-5">
-              <span v-for="(item, index) in slides" :key="index" class="w-2 h-2 rounded-full cursor-pointer"
+            <div class="flex justify-center gap-2 mt-4">
+              <span v-for="(item, index) in slides" :key="index"
+                class="w-2 h-2 rounded-full cursor-pointer transition-colors"
                 :class="currentIndex === index ? 'bg-[#d34341]' : 'bg-gray-300'" @click="goToSlide(index)"></span>
             </div>
           </div>
-          <div class="mt-6">
-            <h1 style="font-weight: 500;" class="text-lg text-[#474646]">Mengapa Chat Dokter di Sisma?</h1>
-            <div class="flex flex-col gap-5 mt-5">
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 class="text-lg font-medium text-gray-800 mb-4">Mengapa Chat Dokter di Sisma?</h2>
+            <div class="space-y-4">
               <div v-for="item in chatSisma" :key="item.id" class="flex items-center gap-3">
-                <img :src="item.img" class="w-10 h-auto rounded-full object-cover" alt="">
-                <p class="">{{ item.nama }}</p>
+                <img :src="item.img" class="w-10 h-10 rounded-full object-cover flex-shrink-0" alt="">
+                <p class="text-sm text-gray-700">{{ item.nama }}</p>
               </div>
             </div>
           </div>
         </div>
-
-        <div class="flex-1/5 border-l border-l-[#a7a6a6] px-3 py-3">
-          <div class="flex justify-center mb-3">
-            <img src="../../../../../src/assets/img/logoS.png" class="w-10 h-auto rounded-full object-cover" alt="">
-          </div>
-          <div class="flex mb-8 gap-5 py-2 px-5 justify-between w-full items-center border-[#a9a6a6] border rounded-md">
-            <input v-model="searchPoli" type="text" placeholder="Cari dokter..." class="outline-none ring-0 w-full"
-              name="" id="">
-            <svg class="w-4 h-4 " fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-            </svg>
-          </div>
-          <div class="h-full scrollbar-hide overflow-y-auto max-h-165">
-            <p class="text-2xl font-semibold">Cari Dokter</p>
-            <span class="text-sm text-[#5b5a5a]">Pilih kategori yang sesuai kondisi anda.</span>
-            <div class="flex mt-6 flex-wrap gap-3">
-              <div v-for="p in filterPoli" :key="p.id" @click="pilihPoli(p.id)"
-                class="cursor-pointer justify-start px-2 gap-2  flex flex-col items-center py-2 w-40">
-                <img class="w-16 h-auto rounded-full object-cover" :src="filteredImg(p.nama_poli)" alt="">
-                <span class="text-center">{{ fakeName(p.nama_poli) }}</span>
+        <div class="w-full lg:w-3/5 xl:w-2/3">
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 h-full">
+            <div class="p-4 sm:p-6 border-b border-gray-200">
+              <div class="flex justify-center mb-4">
+                <img src="../../../../../src/assets/img/logoS.png" class="w-12 h-12 rounded-full object-cover" alt="">
               </div>
-              <div v-if="filterPoli.length === 0" class="text-[#5b5a5a] text-sm">
-                Menu tidak ditemukan.
+              <div
+                class="flex items-center gap-3 py-2.5 px-4 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors">
+                <input v-model="searchPoli" type="text" placeholder="Cari dokter..."
+                  class="outline-none flex-1 text-sm sm:text-base text-gray-700 placeholder-gray-400" />
+                <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="p-4 sm:p-6 overflow-y-auto max-h-[calc(100vh-350px)] lg:max-h-[calc(100vh-250px)]">
+              <div class="mb-4">
+                <h2 class="text-xl sm:text-2xl font-semibold text-gray-900">Cari Dokter</h2>
+                <p class="text-sm text-gray-600 mt-1">Pilih kategori yang sesuai kondisi anda.</p>
+              </div>
+              <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-6">
+                <div v-for="p in filterPoli" :key="p.id" @click="pilihPoli(p.id)"
+                  class="cursor-pointer flex flex-col items-center p-4 rounded-lg border border-gray-200 hover:border-[#d34341] hover:shadow-md transition-all group">
+                  <img
+                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover mb-3 group-hover:scale-105 transition-transform"
+                    :src="filteredImg(p.nama_poli)" alt="">
+                  <span
+                    class="text-center text-sm font-medium text-gray-700 group-hover:text-[#d34341] transition-colors">
+                    {{ fakeName(p.nama_poli) }}
+                  </span>
+                </div>
+              </div>
+              <div v-if="filterPoli.length === 0" class="text-center py-12">
+                <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p class="text-gray-500 text-sm">Menu tidak ditemukan.</p>
               </div>
             </div>
           </div>

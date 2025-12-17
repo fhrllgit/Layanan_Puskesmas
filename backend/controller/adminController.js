@@ -521,3 +521,132 @@ exports.exportExcel = (req, res) => {
     res.end();
   });
 };
+
+exports.getJadwalDokter = (req, res) => {
+  const sql = `
+    SELECT 
+      jd.id,
+      jd.hari,
+      jd.hari_num,
+      jd.jam_mulai,
+      jd.jam_selesai,
+
+      u.id AS dokter_id,
+      u.nama AS nama_dokter,
+      u.avatar,
+
+      p.id AS poli_id,
+      p.nama_poli
+    FROM jadwal_dokter jd
+    JOIN users u ON jd.dokter_id = u.id
+    JOIN poli p ON jd.poli_id = p.id
+    WHERE u.role = 'dokter'
+    ORDER BY jd.hari_num ASC, jd.jam_mulai ASC
+  `
+
+  db.query(sql, (err, rows) => {
+    if (err) {
+      console.error("Get Jadwal Dokter Error:", err)
+      return res.status(500).json({
+        success: false,
+        message: "Gagal mengambil jadwal dokter"
+      })
+    }
+
+    res.status(200).json({
+      success: true,
+      data: rows
+    })
+  })
+}
+
+// semua
+exports.getAntrian = (req, res) => {
+  const sql = `
+    SELECT 
+      a.id,
+      a.nomor_antrian,
+      a.status,
+      a.tanggal,
+      a.keluhan,
+
+      p.id AS poli_id,
+      p.nama_poli,
+      p.prefix,
+
+      pasien.id AS pasien_id,
+      pasien.nama AS pasien_nama,
+
+      dokter.id AS dokter_id,
+      dokter.nama AS dokter_nama
+
+    FROM antrian a
+    JOIN users pasien ON a.pasien_id = pasien.id
+    JOIN users dokter ON a.dokter_id = dokter.id
+    JOIN poli p ON a.poli_id = p.id
+
+    ORDER BY a.tanggal DESC, a.created_at ASC
+  `;
+
+  db.query(sql, (err, rows) => {
+    if (err) {
+      console.error("Get Antrian Error:", err);
+      return res.status(500).json({
+        success: false,
+        message: "Gagal mengambil data antrian"
+      });
+    }
+
+    res.json({
+      success: true,
+      data: rows
+    });
+  });
+};
+
+// untuk contoh pada hari ini
+// exports.getAntrian = (req, res) => {
+//   const sql = `
+//     SELECT 
+//       a.id,
+//       a.nomor_antrian,
+//       a.status,
+//       a.tanggal,
+//       a.keluhan,
+
+//       p.id AS poli_id,
+//       p.nama_poli,
+//       p.prefix,
+
+//       pasien.id AS pasien_id,
+//       pasien.nama AS pasien_nama,
+
+//       dokter.id AS dokter_id,
+//       dokter.nama AS dokter_nama
+
+//     FROM antrian a
+//     JOIN users pasien ON a.pasien_id = pasien.id
+//     JOIN users dokter ON a.dokter_id = dokter.id
+//     JOIN poli p ON a.poli_id = p.id
+
+//     WHERE a.tanggal = CURDATE()
+//     ORDER BY a.created_at ASC
+//   `;
+
+//   db.query(sql, (err, rows) => {
+//     if (err) {
+//       console.error("Get Antrian Hari Ini Error:", err);
+//       return res.status(500).json({
+//         success: false,
+//         message: "Gagal mengambil data antrian hari ini"
+//       });
+//     }
+
+//     res.json({
+//       success: true,
+//       data: rows
+//     });
+//   });
+// };
+
+

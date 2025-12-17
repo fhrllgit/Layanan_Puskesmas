@@ -13,12 +13,13 @@
           class="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-bold text-xl shadow-md border-2 border-white/30">
           {{ dokter.nama?.charAt(0).toUpperCase() || "D" }}
         </div>
-
         <div class="flex-1 min-w-0">
           <p class="font-bold text-lg truncate">{{ dokter.nama || "Dokter" }}</p>
-          <p class="text-sm text-white/80 flex items-center gap-1.5">
-            <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-            {{ dokter.status || "Online" }}
+          <p class="text-sm flex items-center gap-1.5 transition-all"
+            :class="statusDokter === 'online' ? 'text-white' : 'text-gray-400'">
+            <span v-if="statusDokter === 'online'" class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+            <span v-else class="w-2 h-2 bg-gray-400 rounded-full"></span>
+            {{ statusDokter === 'online' ? 'Online' : 'Offline' }}
           </p>
         </div>
       </div>
@@ -68,9 +69,18 @@
       <div v-if="showResepModal"
         class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
         <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden animate-slide-up">
-          <div class="bg-gradient-to-r from-[#d34341] to-[#b83331] px-6 py-4">
-            <h2 class="text-xl font-bold text-white">Detail Resep</h2>
-            <p class="text-white/90 text-sm mt-1">Informasi obat yang diresepkan</p>
+          <div class="bg-gradient-to-r from-[#d34341] to-[#b83331] px-6 py-4  flex items-center justify-between">
+            <div>
+              <h2 class="text-xl font-bold text-white">Detail Resep</h2>
+              <p class="text-white/90 text-sm mt-1">Informasi obat yang diresepkan</p>
+            </div>
+            <span @click="showResepModal = false"
+              class="flex cursor-pointer items-center justify-center p-2 bg-[#8f8e8e54] rounded-full">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3"
+                stroke="currentColor" class="size-5 text-white">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+            </span>
           </div>
           <div class="space-y-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar mb-6">
             <div v-for="(item, index) in resepItems" :key="index"
@@ -155,6 +165,7 @@ import { io } from "socket.io-client";
 import { ref, onMounted, nextTick, computed } from "vue";
 import { useRoute } from "vue-router";
 import { watch } from "vue";
+import Swal from 'sweetalert2'
 
 
 const route = useRoute();
@@ -175,14 +186,11 @@ const statDokter = ref([])
 const dokterId = ref(null);
 const statusDokter = ref("offline");
 
-
-
 const scrollBottom = () => {
   nextTick(() => {
     if (chatBox.value) chatBox.value.scrollTop = chatBox.value.scrollHeight;
   });
 };
-
 
 const handleResepClick = async (id) => {
   try {
@@ -198,28 +206,76 @@ const handleResepClick = async (id) => {
 const tebusPuskesmas = async () => {
   try {
     await axios.put(`/api/konsultasi/tebus-puskesmas/${resepId.value}`);
-    alert("Resep dikirim ke Apotek Puskesmas");
+
+    await Swal.fire({
+      icon: 'success',
+      title: 'Berhasil',
+      text: 'Resep berhasil dikirim ke Apotek Puskesmas',
+      confirmButtonText: 'OK',
+      confirmButtonColor: '#d34341'
+    });
+
     showResepModal.value = false;
+
   } catch (err) {
     console.error(err);
+
+    Swal.fire({
+      icon: 'error',
+      title: 'Gagal',
+      text: 'Terjadi kesalahan saat mengirim resep',
+      confirmButtonText: 'OK',
+      confirmButtonColor: '#d34341'
+    });
   }
 };
 
+
 const tebusLuar = async () => {
   try {
-    const res = await axios.get(`/api/konsultasi/tebus-luar/${resepId.value}`, {
-      responseType: "blob",
+    Swal.fire({
+      title: 'Menyiapkan Resep',
+      text: 'Mohon tunggu...',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
     });
+
+    const res = await axios.get(
+      `/api/konsultasi/tebus-luar/${resepId.value}`,
+      { responseType: "blob" }
+    );
+
     const blob = new Blob([res.data], { type: "application/pdf" });
     const link = document.createElement("a");
     link.href = window.URL.createObjectURL(blob);
     link.download = `resep_${resepId.value}.pdf`;
     link.click();
+
+    await Swal.fire({
+      icon: 'success',
+      title: 'Berhasil',
+      text: 'Resep berhasil diunduh',
+      timer: 2000,
+      showConfirmButton: false
+    });
+
     showResepModal.value = false;
+
   } catch (err) {
     console.error(err);
+
+    Swal.fire({
+      icon: 'error',
+      title: 'Gagal',
+      text: 'Gagal mengunduh resep',
+      confirmButtonText: 'OK',
+      confirmButtonColor: '#d34341'
+    });
   }
 };
+
 
 const kirimPesan = async () => {
   if (statusDokter.value !== "online") return;
@@ -260,12 +316,7 @@ onMounted(async () => {
     statusDokter.value = "offline";
   }
 });
-
-
-
 </script>
-
-
 
 <style>
 @keyframes fade-in {

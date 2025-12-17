@@ -1,4 +1,4 @@
-const db = require("../config/db"); 
+const db = require("../config/db");
 const moment = require("moment");
 
 exports.mulaiChat = (req, res) => {
@@ -73,46 +73,56 @@ exports.kirimPesan = (req, res) => {
         id: result.insertId,
         konsultasi_id,
         sender_id,
-        sender: req.user.role, 
-        pesan: message, 
+        sender: req.user.role,
+        pesan: message,
         created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
       });
 
-      // resep tebus 
       const createResepFromChat = (konsultasi_id, sender_id, message) => {
-  // Pastikan pengirim dokter
-  db.query("SELECT role FROM users WHERE id=?", [sender_id], (err, rows) => {
-    if(err) return console.log(err);
-    if(rows[0].role !== 'dokter') return;
+        db.query(
+          "SELECT role FROM users WHERE id=?",
+          [sender_id],
+          (err, rows) => {
+            if (err) return console.log(err);
+            if (rows[0].role !== "dokter") return;
 
-    // Cek apakah chat mengandung keyword "Resep:"
-    if(message.toLowerCase().includes("resep:")) {
-      // Ambil pasien_id dari konsultasi
-      db.query("SELECT pasien_id FROM konsultasi_online WHERE id=?", [konsultasi_id], (err2, rows2) => {
-        if(err2) return console.log(err2);
-        const pasien_id = rows2[0].pasien_id;
-
-        // Insert ke resep_obat
-        const sqlResep = `
+            if (message.toLowerCase().includes("resep:")) {
+              db.query(
+                "SELECT pasien_id FROM konsultasi_online WHERE id=?",
+                [konsultasi_id],
+                (err2, rows2) => {
+                  if (err2) return console.log(err2);
+                  const pasien_id = rows2[0].pasien_id;
+                  const sqlResep = `
           INSERT INTO resep_obat (konsultasi_id, pasien_id, dokter_id, status, tanggal)
           VALUES (?, ?, ?, 'pending', NOW())
         `;
-        db.query(sqlResep, [konsultasi_id, pasien_id, sender_id], (err3, result) => {
-          if(err3) return console.log(err3);
-          const resep_id = result.insertId;
+                  db.query(
+                    sqlResep,
+                    [konsultasi_id, pasien_id, sender_id],
+                    (err3, result) => {
+                      if (err3) return console.log(err3);
+                      const resep_id = result.insertId;
 
-          // Insert item resep (sederhana, bisa dikembangkan parsing)
-          const sqlItem = `
+                      const sqlItem = `
             INSERT INTO resep_obat_item (resep_id, nama_obat, dosis, jumlah, keterangan, created_at)
             VALUES (?, ?, ?, ?, ?, NOW())
           `;
-          db.query(sqlItem, [resep_id, message, 1, 1, "ikuti petunjuk dokter"]);
-        });
-      });
-    }
-  });
-};
-
+                      db.query(sqlItem, [
+                        resep_id,
+                        message,
+                        1,
+                        1,
+                        "ikuti petunjuk dokter",
+                      ]);
+                    }
+                  );
+                }
+              );
+            }
+          }
+        );
+      };
 
       res.status(200).json({ msg: "Pesan terkirim" });
     });
@@ -121,13 +131,9 @@ exports.kirimPesan = (req, res) => {
 
 exports.akhiriKonsultasi = (req, res) => {
   const { konsultasi_id } = req.body;
-
-  // update status konsultasi
   const sql = `UPDATE konsultasi_online SET status='finished', end_time=NOW() WHERE id=?`;
   db.query(sql, [konsultasi_id], (err, result) => {
     if (err) return res.status(500).json({ msg: err.message });
-
-    // ambil dokter_id untuk update status dokter
     const sqlDokter = `SELECT dokter_id FROM konsultasi_online WHERE id=?`;
     db.query(sqlDokter, [konsultasi_id], (err, results) => {
       if (!err && results.length) {
@@ -136,8 +142,6 @@ exports.akhiriKonsultasi = (req, res) => {
         db.query(sqlStatus, [dokter_id]);
       }
     });
-
-    // emit event selesai konsultasi
     req.io
       .to(`konsultasi_${konsultasi_id}`)
       .emit("konsultasi-finished", { konsultasi_id });
@@ -154,7 +158,7 @@ exports.akhiriKonsultasi = (req, res) => {
 //   db.query(sqlUpdate, [konsultasi_id, dokter_id]);
 
 //   const sql = `
-//     SELECT c.*, u.nama, u.role 
+//     SELECT c.*, u.nama, u.role
 //     FROM konsultasi_chat c
 //     JOIN users u ON c.sender_id = u.id
 //     WHERE konsultasi_id=?
@@ -178,8 +182,6 @@ exports.akhiriKonsultasi = (req, res) => {
 exports.getChat = (req, res) => {
   const { konsultasi_id } = req.params;
   const user_id = req.user.id;
-
-  // Tandai pesan sebagai terbaca
   const sqlUpdate = `UPDATE konsultasi_chat SET is_read = 1 WHERE konsultasi_id = ? AND sender_id != ?`;
   db.query(sqlUpdate, [konsultasi_id, user_id]);
 
@@ -200,7 +202,7 @@ exports.getChat = (req, res) => {
       sender: r.role,
       pesan: r.message,
       created_at: r.created_at,
-      isResep: r.message.toLowerCase().startsWith("resep:") // tambahkan flag
+      isResep: r.message.toLowerCase().startsWith("resep:"), 
     }));
 
     return res.status(200).json({ data: formatted });
@@ -217,9 +219,9 @@ exports.getResep = (req, res) => {
     LEFT JOIN resep_obat_item i ON r.id = i.resep_id
     WHERE r.rekam_id = ?
   `;
-  
+
   db.query(sql, [konsultasi_id], (err, results) => {
-    if(err) {
+    if (err) {
       console.error("Error query resep:", err);
       return res.status(500).json({ msg: err.message });
     }
@@ -228,24 +230,31 @@ exports.getResep = (req, res) => {
 };
 
 exports.createResep = (req, res) => {
-  const { konsultasi_id, obat } = req.body; // obat = array [{nama_obat,dosis,jumlah,keterangan}]
+  const { konsultasi_id, obat } = req.body; 
   const dokter_id = req.user.id;
 
-  const sqlResep = "INSERT INTO resep_obat (konsultasi_id,dokter_id,status,tanggal) VALUES (?,?,?,NOW())";
-  db.query(sqlResep, [konsultasi_id,dokter_id,'aktif'], (err,result)=>{
-    if(err) return res.status(500).json({msg: err.message});
+  const sqlResep =
+    "INSERT INTO resep_obat (konsultasi_id,dokter_id,status,tanggal) VALUES (?,?,?,NOW())";
+  db.query(sqlResep, [konsultasi_id, dokter_id, "aktif"], (err, result) => {
+    if (err) return res.status(500).json({ msg: err.message });
     const resep_id = result.insertId;
 
-    const values = obat.map(o => [resep_id,o.nama_obat,o.dosis,o.jumlah,o.keterangan,new Date()]);
-    const sqlItem = "INSERT INTO resep_obat_item (resep_id,nama_obat,dosis,jumlah,keterangan,created_at) VALUES ?";
-    db.query(sqlItem,[values], (err2)=>{
-      if(err2) return res.status(500).json({msg: err2.message});
-      res.status(200).json({msg:"Resep berhasil dibuat"});
+    const values = obat.map((o) => [
+      resep_id,
+      o.nama_obat,
+      o.dosis,
+      o.jumlah,
+      o.keterangan,
+      new Date(),
+    ]);
+    const sqlItem =
+      "INSERT INTO resep_obat_item (resep_id,nama_obat,dosis,jumlah,keterangan,created_at) VALUES ?";
+    db.query(sqlItem, [values], (err2) => {
+      if (err2) return res.status(500).json({ msg: err2.message });
+      res.status(200).json({ msg: "Resep berhasil dibuat" });
     });
   });
 };
-
-
 
 exports.daftarKonsultasiAktif = (req, res) => {
   const dokter_id = req.user.id;
@@ -264,7 +273,7 @@ exports.daftarKonsultasiAktif = (req, res) => {
     return res.status(200).json({ data: results });
   });
 };
- 
+
 exports.tandaiDibaca = (req, res) => {
   const { id } = req.params;
   const user_id = req.user.id;
@@ -298,7 +307,7 @@ exports.getKonsultasiDetail = (req, res) => {
 
   db.query(sql, [id], (err, rows) => {
     if (err) {
-      console.error("SQL Error:", err); 
+      console.error("SQL Error:", err);
       return res.status(500).json({ msg: "Terjadi kesalahan server" });
     }
     if (rows.length === 0) {
@@ -316,7 +325,7 @@ exports.getKonsultasiDetail = (req, res) => {
 };
 
 exports.getTotalKonsultasiHariIni = (req, res) => {
-  const dokterId = req.params.dokter_id; 
+  const dokterId = req.params.dokter_id;
 
   const sql = `
     SELECT COUNT(*) AS total
@@ -333,9 +342,7 @@ exports.getTotalKonsultasiHariIni = (req, res) => {
     }
     res.json({
       success: true,
-      total: result[0].total
+      total: result[0].total,
     });
   });
 };
-
-

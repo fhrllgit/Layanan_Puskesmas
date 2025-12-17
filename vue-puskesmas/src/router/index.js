@@ -76,6 +76,7 @@ const router = createRouter({
     meta: { requiresAuth: true, role: 'apoteker' },
     children: [
       { path: 'dashboard', component: () => import('@/components/pages/apoteker/Dashboard.vue') },
+      { path: 'berobat-resep', component: () => import('@/components/pages/apoteker/BerobatResep.vue') },
       { path: 'konsultasi-resep', component: () => import('@/components/pages/apoteker/KonsultasiResep.vue') },
       // { path: 'daftar-poli', component: () => import('@/components/pages/pasien/DaftarPoli.vue') },
       // { path: 'status-antrian', component: () => import('@/components/pages/pasien/StatusAntrian.vue') },
